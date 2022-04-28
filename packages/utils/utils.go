@@ -44,9 +44,13 @@ func ReadPassword(text string) (string, error) {
 }
 
 // Check checks if an error and exit
-func Check(err error) {
+func Check(err error, message string) {
 	if err != nil {
-		fmt.Printf("%s %v\n", RedS("Error:"), err)
+		if len(message) > 0{
+			fmt.Printf("%s %s caused by %v\n", RedS("Error:"), message, err)
+		}else{
+			fmt.Printf("%s %v\n", RedS("Error:"), err)
+		}
 		os.Exit(1)
 	}
 }

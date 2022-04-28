@@ -1,0 +1,24 @@
+syntax = "proto3";
+package tutorial;
+
+import "google/protobuf/timestamp.proto";
+option go_package = "packages/protos";
+
+message Box {
+  string name = 1;
+  string version = 2;
+  google.protobuf.Timestamp last_updated = 3;
+  string owner = 5;
+  repeated Secret secrets = 4;
+}
+
+message Secret {
+    string name = 1;
+    int32 id = 2;  // Unique ID number for this secret
+    string pwd = 3;
+    string url = 4;
+    string notes = 5;
+    map<string, string> others = 6;
+
+    google.protobuf.Timestamp last_updated = 7;
+  }
