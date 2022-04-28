@@ -22,6 +22,7 @@ var BoxCmd = &cobra.Command{
 func init() {
 	// Here you will define your flags and configuration settings.
 	BoxCmd.AddCommand(createCmd)
+	BoxCmd.AddCommand(listCmd)
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:

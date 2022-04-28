@@ -9,7 +9,7 @@ goreleaser:
 	@goreleaser  --rm-dist --snapshot --skip-publish
 	@echo "done!"
 
-install-on-mac: build test
+install-on-mac: build testing
 	@echo "start install..."
 	@echo "copying into $(GOPATH)/bin..."
 	@cp bin/cryptex-darwin-amd64 $(GOPATH)/bin/cryptex
@@ -21,7 +21,7 @@ run:
 
 build:
 	# compile Go-AL for several platform
-	@echo "oompiling for every OS and Platform..."
+	@echo "compiling for every OS and Platform..."
 	GOOS=darwin GOARCH=amd64 go build -ldflags "-X main.GitCommit=${GIT_COMMIT}" -o bin/cryptex-darwin-amd64 main.go
 	GOOS=linux GOARCH=amd64 go build -ldflags "-X main.GitCommit=${GIT_COMMIT}" -o bin/cryptex-linux-amd64 main.go
 	GOOS=windows GOARCH=amd64 go build -ldflags "-X main.GitCommit=${GIT_COMMIT}" -o bin/cryptex-windows-amd64.exe main.go
