@@ -5,18 +5,15 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package box
 
 import (
-	"fmt"
 	"github.com/spf13/cobra"
 )
 
 // boxCmd represents the box command
 var BoxCmd = &cobra.Command{
 	Use:   "box",
-	Short: "A brief description of your box",
-	Long: `Box longer description`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("box called")
-	},
+	Short: "Manage the box",
+	Long: `Manage the box: you can create, delete and list your boxes using this
+command`,
 }
 
 func init() {
