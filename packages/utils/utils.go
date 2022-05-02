@@ -1,9 +1,11 @@
 package utils
 
 import (
+	"bufio"
 	"fmt"
 	"golang.org/x/term"
 	"os"
+	"strings"
 )
 
 var (
@@ -53,4 +55,11 @@ func Check(err error, message string) {
 		}
 		os.Exit(1)
 	}
+}
+
+// GetText returns a text read from a bufio.Reader interface object
+func GetText(reader *bufio.Reader) string {
+	text, _ := reader.ReadString('\n')
+	output := strings.Replace(text, "\n", "", -1)
+	return strings.Replace(output, "\r", "", -1)
 }

@@ -19,6 +19,7 @@ message Secret {
     string url = 4;
     string notes = 5;
     map<string, string> others = 6;
+    string version = 8;
 
     google.protobuf.Timestamp last_updated = 7;
   }
