@@ -5,9 +5,10 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"os"
 	"github.com/mas2020-golang/cryptex/cmd/box"
+	"github.com/mas2020-golang/cryptex/cmd/box/secret"
 	"github.com/spf13/cobra"
+	"os"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -36,6 +37,7 @@ func Execute() {
 
 func init() {
 	rootCmd.AddCommand(box.BoxCmd)
+	rootCmd.AddCommand(secret.SecretCmd)
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.

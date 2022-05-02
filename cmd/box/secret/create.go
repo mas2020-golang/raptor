@@ -1,0 +1,140 @@
+/*
+Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+
+*/
+package secret
+
+import (
+	"bufio"
+	"fmt"
+	"github.com/mas2020-golang/cryptex/packages/protos"
+	"github.com/mas2020-golang/cryptex/packages/utils"
+	"github.com/spf13/cobra"
+	"google.golang.org/protobuf/proto"
+	"io/ioutil"
+	"os"
+	"path"
+	"strings"
+)
+
+var (
+	boxName string
+	box     *protos.Box
+)
+
+// boxCmd represents the box command
+var addCmd = &cobra.Command{
+	Use:     "add",
+	Args:    cobra.MinimumNArgs(1),
+	Short:   "Create a new secret",
+	Long:    `Create a new secret adding the one to the existing secret for the box`,
+	Example: `$ cryptex secret add new-secret --box test`,
+	Run: func(cmd *cobra.Command, args []string) {
+		add(args[0])
+	},
+}
+
+func init() {
+	addCmd.Flags().StringVarP(&boxName, "box", "b", "", "The name of the box where to add the secret")
+	addCmd.MarkFlagRequired("box")
+}
+
+func add(name string) {
+	// check the folder .cryptex
+	home, err := os.UserHomeDir()
+	utils.Check(err, "")
+	// read the file in the home dir
+	boxF := path.Join(home, ".cryptex", "boxes", boxName)
+
+	// open the box
+	err = openBox(boxF)
+	utils.Check(err, "")
+	// add the secret
+	err = addSecret(name)
+	utils.Check(err, "")
+	fmt.Println()
+	// save the box
+	err = saveBox(boxF)
+	utils.Check(err, "")
+	utils.Success("box saved!")
+}
+
+func openBox(path string) error {
+	// Read the existing address book.
+	in, err := ioutil.ReadFile(path)
+	if err != nil {
+		return fmt.Errorf("reading the file box in %s: %v", path, err)
+	}
+
+	box = &protos.Box{}
+	err = proto.Unmarshal(in, box)
+	if err != nil {
+		return fmt.Errorf("failed to parse box in %s: %v", path, err)
+	}
+	return nil
+}
+
+func addSecret(name string) error {
+	utils.BoldOut("==> add a new secret (to skip type CTRL+D)\n")
+	utils.RedOut("(to exit without saving type CTRL+C)\n")
+	fmt.Println(strings.Repeat("_", 45))
+	if box.Secrets == nil {
+		box.Secrets = make([]*protos.Secret, 0)
+	}
+	// new secret
+	s := protos.Secret{}
+	// read from standard input
+	r := bufio.NewReader(os.Stdin)
+	fmt.Println(utils.BoldS("Name: "), name)
+	fmt.Printf(utils.BoldS("Version: "))
+	s.Version = utils.GetText(r)
+	if len(s.Version) == 0 {
+		fmt.Println()
+	}
+	fmt.Printf("Password: ")
+	s.Pwd = utils.GetText(r)
+	if len(s.Pwd) == 0 {
+		fmt.Println()
+	}
+	fmt.Printf("Url: ")
+	s.Url = utils.GetText(r)
+	if len(s.Url) == 0 {
+		fmt.Println()
+	}
+	fmt.Printf("Notes: ")
+	s.Notes = utils.GetText(r)
+	if len(s.Notes) == 0 {
+		fmt.Println()
+	}
+	fmt.Printf("Do you have other secres to add? [Y/n] ")
+	answer := utils.GetText(r)
+	if answer == "Y" {
+		s.Others = make(map[string]string)
+		for {
+			fmt.Printf("Name: ")
+			n := utils.GetText(r)
+			fmt.Printf("Value: ")
+			v := utils.GetText(r)
+			s.Others[n] = v
+			fmt.Printf("Do you have other secres to add? [Y/n] ")
+			answer = utils.GetText(r)
+			if answer != "Y" {
+				break
+			}
+		}
+	}
+	box.Secrets = append(box.Secrets, &s)
+	return nil
+}
+
+func saveBox(path string) error {
+	out, err := proto.Marshal(box)
+	if err != nil {
+		return fmt.Errorf("failed to encode the box: %v", err)
+	}
+
+	if err := ioutil.WriteFile(path, out, 0644); err != nil {
+		return fmt.Errorf("failed to write the box: %v", err)
+	}
+	return nil
+}
