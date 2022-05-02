@@ -11,15 +11,11 @@ import (
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/spf13/cobra"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"io/ioutil"
 	"os"
 	"path"
 	"strings"
-)
-
-var (
-	boxName string
-	box     *protos.Box
 )
 
 // boxCmd represents the box command
@@ -35,8 +31,6 @@ var addCmd = &cobra.Command{
 }
 
 func init() {
-	addCmd.Flags().StringVarP(&boxName, "box", "b", "", "The name of the box where to add the secret")
-	addCmd.MarkFlagRequired("box")
 }
 
 func add(name string) {
@@ -56,7 +50,7 @@ func add(name string) {
 	// save the box
 	err = saveBox(boxF)
 	utils.Check(err, "")
-	utils.Success("box saved!")
+	utils.Success(utils.BoldS("box saved!"))
 }
 
 func openBox(path string) error {
@@ -75,6 +69,9 @@ func openBox(path string) error {
 }
 
 func addSecret(name string) error {
+	if err := search(name); err != nil{
+		return err
+	}
 	utils.BoldOut("==> add a new secret (to skip type CTRL+D)\n")
 	utils.RedOut("(to exit without saving type CTRL+C)\n")
 	fmt.Println(strings.Repeat("_", 45))
@@ -83,6 +80,7 @@ func addSecret(name string) error {
 	}
 	// new secret
 	s := protos.Secret{}
+	s.Name = name
 	// read from standard input
 	r := bufio.NewReader(os.Stdin)
 	fmt.Println(utils.BoldS("Name: "), name)
@@ -123,6 +121,7 @@ func addSecret(name string) error {
 			}
 		}
 	}
+	s.LastUpdated = timestamppb.Now()
 	box.Secrets = append(box.Secrets, &s)
 	return nil
 }
@@ -135,6 +134,17 @@ func saveBox(path string) error {
 
 	if err := ioutil.WriteFile(path, out, 0644); err != nil {
 		return fmt.Errorf("failed to write the box: %v", err)
+	}
+	return nil
+}
+
+// search goes into the secret and throws an error if a secret with the same
+// name already exists
+func search(name string) error {
+	for _, s := range box.Secrets{
+		if (*s).Name == name{
+			return fmt.Errorf("a secret with the name %s already exists", name)
+		}
 	}
 	return nil
 }
