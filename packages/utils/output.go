@@ -11,7 +11,8 @@ const (
 	Blue     = "\033[34m"
 	Orange   = "\033[38;5;167m"
 	Green    = "\033[32m"
-	LightRed = "\033[31m"
+	Red = "\033[31m"
+	LightRed = "\033[91m"
 	Yellow   = "\033[33m"
 )
 
@@ -47,6 +48,11 @@ func GreenOut(t string) {
 
 // RedS returns a red string
 func RedS(t string) string {
+	return fmt.Sprintf("%s%s%s", Red, t, Reset)
+}
+
+// RedS returns a light red string
+func LightRedS(t string) string {
 	return fmt.Sprintf("%s%s%s", LightRed, t, Reset)
 }
 
