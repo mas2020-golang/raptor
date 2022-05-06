@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	boxName string
+	filter string
 )
 
 // boxCmd represents the box command
@@ -31,7 +31,7 @@ using a regular expression.`,
 }
 
 func init() {
-	listCmd.Flags().StringVarP(&boxName, "name", "n", "", "The name of the box as a regexp (e.g. 'test.*')")
+	listCmd.Flags().StringVarP(&filter, "filter", "f", "", "The name of the box as a regexp (e.g. 'test.*')")
 }
 
 func list() {
@@ -46,8 +46,8 @@ func list() {
 		fi, err := file.Info()
 		utils.Check(err, fmt.Sprintf("problem getting the size of the file %s", file.Name()))
 		// if --name is present check for the regular expression
-		if len(boxName) > 0{
-			r, _ := regexp.Compile(boxName)
+		if len(filter) > 0{
+			r, _ := regexp.Compile(filter)
 			if r.MatchString(file.Name()){
 				fmt.Printf("%-16s%-10d\n", file.Name(), fi.Size())
 			}
