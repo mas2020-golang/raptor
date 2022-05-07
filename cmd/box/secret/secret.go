@@ -26,6 +26,7 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	SecretCmd.AddCommand(addCmd)
 	SecretCmd.AddCommand(listCmd)
+	SecretCmd.AddCommand(getCmd)
 	SecretCmd.PersistentFlags().StringVarP(&boxName, "box", "b", "", "The name of the box where to add the secret")
-	SecretCmd.MarkPersistentFlagRequired("box")
+	//SecretCmd.MarkPersistentFlagRequired("box")
 }

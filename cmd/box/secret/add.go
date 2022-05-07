@@ -20,11 +20,11 @@ import (
 
 // boxCmd represents the box command
 var addCmd = &cobra.Command{
-	Use:     "add",
+	Use:     "add <NAME>",
 	Args:    cobra.MinimumNArgs(1),
 	Short:   "Create a new secret",
 	Long:    `Create a new secret adding the one to the existing secret for the box`,
-	Example: `$ cryptex secret add new-secret --box test`,
+	Example: `$ cryptex secret add 'new-secret' --box test`,
 	Run: func(cmd *cobra.Command, args []string) {
 		add(args[0])
 	},
@@ -34,38 +34,44 @@ func init() {
 }
 
 func add(name string) {
-	// check the folder .cryptex
-	home, err := os.UserHomeDir()
-	utils.Check(err, "")
-	// read the file in the home dir
-	boxF := path.Join(home, ".cryptex", "boxes", boxName)
-
 	// open the box
-	err = openBox(boxF)
+	boxPath, err := openBox(boxName)
 	utils.Check(err, "")
 	// add the secret
 	err = addSecret(name)
 	utils.Check(err, "")
 	fmt.Println()
 	// save the box
-	err = saveBox(boxF)
+	err = saveBox(boxPath)
 	utils.Check(err, "")
 	utils.Success(utils.BoldS("box saved!"))
 }
 
-func openBox(path string) error {
+func openBox(name string) (string, error) {
+	// search the CRYPTEX_BOX env if name is empty
+	if len(name) == 0{
+		name = os.Getenv("CRYPTEX_BOX")
+		if len(name) == 0{
+			return "", fmt.Errorf("--box args is not given and the env var CRYPTEX_BOX is empty")
+		}
+	}
+	// check the folder .cryptex
+	home, err := os.UserHomeDir()
+	utils.Check(err, "")
+	// read the file in the home dir
+	path := path.Join(home, ".cryptex", "boxes", name)
 	// Read the existing address book.
 	in, err := ioutil.ReadFile(path)
 	if err != nil {
-		return fmt.Errorf("reading the file box in %s: %v", path, err)
+		return "", fmt.Errorf("reading the file box in %s: %v", path, err)
 	}
 
 	box = &protos.Box{}
 	err = proto.Unmarshal(in, box)
 	if err != nil {
-		return fmt.Errorf("failed to parse box in %s: %v", path, err)
+		return "", fmt.Errorf("failed to parse box in %s: %v", path, err)
 	}
-	return nil
+	return path, nil
 }
 
 func addSecret(name string) error {

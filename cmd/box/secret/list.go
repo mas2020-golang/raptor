@@ -8,14 +8,12 @@ import (
 	"fmt"
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/spf13/cobra"
-	"os"
-	"path"
 	"regexp"
 	"time"
 )
 
 var (
-	secretName string
+	filter string
 )
 
 // boxCmd represents the box command
@@ -33,21 +31,15 @@ $ cryptex secret ls --box test --name '^secret.*test$`,
 }
 
 func init() {
-	listCmd.Flags().StringVarP(&secretName, "name", "n", "", "The secret name as a regexp (e.g. 'test.*')")
+	listCmd.Flags().StringVarP(&filter, "filter", "f", "", "The secret name as a regexp (e.g. 'test.*')")
 }
 
 func list() {
 	// load the local timezone
 	loc, err := time.LoadLocation("Local")
 	utils.Check(err, "")
-	// check the folder .cryptex
-	home, err := os.UserHomeDir()
-	utils.Check(err, "")
-	// read the file in the home dir
-	boxF := path.Join(home, ".cryptex", "boxes", boxName)
-
 	// open the box
-	err = openBox(boxF)
+	_, err = openBox(boxName)
 	utils.Check(err, "")
 	// ls the secret
 	fmt.Printf("%-15s%-10s%-31s%-31s%-11s%s\n", "NAME", "VERSION", "URL", "NOTES", "ITEMS", "LAST-UPD")
@@ -61,16 +53,17 @@ func list() {
 		if len(s.Url) > 30{
 			s.Url =  s.Url[0:26] + "..."
 		}
+		s.Url = utils.BlueS(fmt.Sprintf("%-31s", s.Url))
 		if len(s.Notes) > 30{
 			s.Notes =  s.Notes[0:26] + "..."
 		}
 		s.Name = utils.LightRedS(utils.BoldS(fmt.Sprintf("%-15s", s.Name)))
 		lastUpdated := s.LastUpdated.AsTime().In(loc).Format("Jan 2 15:04 2006 MST")
 		// check the name flag
-		if len(secretName) > 0{
-			r, _ := regexp.Compile(secretName)
+		if len(filter) > 0{
+			r, _ := regexp.Compile(filter)
 			if r.MatchString(s.Name){
-				fmt.Printf("%s%-10s%-31s%-31s%-11d%s\n", s.Name, s.Version, s.Url, s.Notes, len(s.Others),
+				fmt.Printf("%s%-10s%s%-31s%-11d%s\n", s.Name, s.Version, s.Url, s.Notes, len(s.Others),
 					lastUpdated)
 			}
 		}else{
