@@ -95,21 +95,14 @@ func addSecret(name string) error {
 	if len(s.Version) == 0 {
 		fmt.Println()
 	}
+	fmt.Printf(utils.BoldS("Login: "))
+	s.Login = utils.GetText(r)
 	fmt.Printf("Password: ")
 	s.Pwd = utils.GetText(r)
-	if len(s.Pwd) == 0 {
-		fmt.Println()
-	}
 	fmt.Printf("Url: ")
 	s.Url = utils.GetText(r)
-	if len(s.Url) == 0 {
-		fmt.Println()
-	}
 	fmt.Printf("Notes: ")
 	s.Notes = utils.GetText(r)
-	if len(s.Notes) == 0 {
-		fmt.Println()
-	}
 	fmt.Printf("Do you have other secres to add? [Y/n] ")
 	answer := utils.GetText(r)
 	if answer == "Y" {
