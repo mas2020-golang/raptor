@@ -37,7 +37,7 @@ func get(name string) {
 	// open the box
 	_, err := openBox(boxName)
 	utils.Check(err, "")
-	s, err := searchSecret(name)
+	s, err := searchSecretPwd(name)
 	utils.Check(err, "")
 	if len(s) == 0 {
 		utils.Warning(fmt.Sprintf("no secret %q found in %s", name, boxName))
@@ -49,9 +49,9 @@ func get(name string) {
 	utils.Success(utils.BoldS("the secret is in your clipboard"))
 }
 
-// searchSecret searches for the secret and the value:
+// searchSecretPwd searches for the secret and the value:
 // e.g. foo, foo.items.pwd
-func searchSecret(name string) (value string, err error) {
+func searchSecretPwd(name string) (value string, err error) {
 	var (
 		secretName, secretItem string
 	)
