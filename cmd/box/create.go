@@ -66,10 +66,7 @@ func createBox(name, owner string) {
 		Version:     "1",
 		LastUpdated: timestamppb.Now(),
 	}
-	// Add 100 secrets
-	//for i := 0; i < 100; i++ {
-	//	addSecret(&b, int32(i))
-	//}
+
 	// Write the new address book back to disk.
 	_, err = os.Stat(path.Join(home,".cryptex", "boxes", b.Name))
 	if err == nil{
