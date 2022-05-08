@@ -45,18 +45,21 @@ func list() {
 	_, err = openBox(boxName)
 	utils.Check(err, "")
 	// ls the secret
-	fmt.Printf("%-15s%-10s%-31s%-31s%-11s%s\n", "NAME", "VERSION", "URL", "NOTES", "ITEMS", "LAST-UPD")
+	fmt.Printf("%-15s%-9s%-16s%-45s%-11s%s\n", "NAME", "VERSION", "LOGIN", "URL", "ITEMS", "LAST-UPD")
 	for _, s := range box.Secrets {
+		if len(s.Login) > 11 {
+			s.Login = s.Login[0:11] + "..."
+		}
 		if len(s.Version) > 9 {
 			s.Version = s.Version[0:6] + "..."
 		}
 		if len(s.Name) > 14 {
 			s.Name = s.Name[0:10] + "..."
 		}
-		if len(s.Url) > 30 {
-			s.Url = s.Url[0:26] + "..."
+		if len(s.Url) > 44 {
+			s.Url = s.Url[0:42] + "..."
 		}
-		s.Url = utils.BlueS(fmt.Sprintf("%-31s", s.Url))
+		s.Url = utils.BlueS(fmt.Sprintf("%-45s", s.Url))
 		if len(s.Notes) > 30 {
 			s.Notes = s.Notes[0:26] + "..."
 		}
@@ -66,12 +69,12 @@ func list() {
 		if len(filter) > 0 {
 			r, _ := regexp.Compile(filter)
 			if r.MatchString(s.Name) {
-				fmt.Printf("%s%-10s%s%-31s%-11d%s\n", s.Name, s.Version, s.Url, s.Notes, len(s.Others),
+				fmt.Printf("%s%-9s%-16s%s%-11d%s\n", s.Name, s.Version, s.Login, s.Url, len(s.Others),
 					lastUpdated)
 				showItems(s)
 			}
 		} else {
-			fmt.Printf("%s%-10s%-31s%-31s%-11d%s\n", s.Name, s.Version, s.Url, s.Notes, len(s.Others),
+			fmt.Printf("%s%-9s%-16s%s%-11d%s\n", s.Name, s.Version, s.Login, s.Url, len(s.Others),
 				lastUpdated)
 			showItems(s)
 		}
