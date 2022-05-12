@@ -93,5 +93,5 @@ func Warning(text string) {
 
 // Warning returns a warning string
 func Error(text string) {
-	fmt.Printf("%s%s%s\n", RedS("Error: "), text, Reset)
+	fmt.Printf("%s%s%s\n", LightRedS("Error: "), text, Reset)
 }

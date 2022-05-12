@@ -46,6 +46,7 @@ func get(name string) {
 	// copy the secret into the clipboard
 	err = execCmd(s)
 	utils.Check(err, "")
+	fmt.Println()
 	utils.Success(utils.BoldS("the secret is in your clipboard"))
 }
 

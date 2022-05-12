@@ -64,7 +64,7 @@ func showToStdOut(s *protos.Secret, unsecure bool) error {
 	}
 	lastUpdated := s.LastUpdated.AsTime().In(loc).Format("Jan 2 15:04 2006 MST")
 	//utils.BoldOut(fmt.Sprintf("Info for the secret %s\n", s.Name))
-	fmt.Println(strings.Repeat("-", 5))
+	fmt.Println(utils.GreenS(strings.Repeat("-", 35)))
 	utils.BoldOut(fmt.Sprintf("VERSION: %s\n", s.Version))
 	fmt.Printf("%s: %s\n", utils.BoldS("LOGIN"), s.Login)
 	if unsecure{

@@ -8,6 +8,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/mas2020-golang/cryptex/packages/protos"
+	"github.com/mas2020-golang/cryptex/packages/security"
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/spf13/cobra"
 	"google.golang.org/protobuf/proto"
@@ -17,6 +18,8 @@ import (
 	"path"
 	"strings"
 )
+
+var key string
 
 // boxCmd represents the box command
 var addCmd = &cobra.Command{
@@ -66,10 +69,17 @@ func openBox(name string) (string, error) {
 		return "", fmt.Errorf("reading the file box in %s: %v", path, err)
 	}
 
+	// ask for the password
+	key, err = utils.AskForPassword(false)
+	utils.Check(err, "")
+	// encrypt the box
+	decIn, err := security.DecryptBox(in, key)
+	utils.Check(err, "")
+
 	box = &protos.Box{}
-	err = proto.Unmarshal(in, box)
+	err = proto.Unmarshal(decIn, box)
 	if err != nil {
-		return "", fmt.Errorf("failed to parse box in %s: %v", path, err)
+		return "", fmt.Errorf("failed to read the box: %v. Maybe an incorrect pwd?", err)
 	}
 	return path, nil
 }
@@ -130,8 +140,10 @@ func saveBox(path string) error {
 	if err != nil {
 		return fmt.Errorf("failed to encode the box: %v", err)
 	}
-
-	if err := ioutil.WriteFile(path, out, 0644); err != nil {
+	// encrypt the box
+	encOut, err := security.EncryptBox(out, key)
+	utils.Check(err, "")
+	if err := ioutil.WriteFile(path, encOut, 0644); err != nil {
 		return fmt.Errorf("failed to write the box: %v", err)
 	}
 	return nil
