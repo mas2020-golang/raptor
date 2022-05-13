@@ -74,6 +74,7 @@ func showToStdOut(s *protos.Secret, unsecure bool) error {
 	}
 	fmt.Printf("%s: %s\n", utils.BoldS("URL"), s.Url)
 	fmt.Printf("%s:\n%s\n", utils.BoldS("NOTES"), s.Notes)
+	fmt.Println(utils.BlueS(strings.Repeat("-", 35)))
 	fmt.Printf("%s: %s\n", utils.BoldS("UPDATE"), lastUpdated)
 	if s.Others != nil && len(s.Others) > 0 {
 		utils.BoldOut(fmt.Sprintf("- ITEMS:\n"))

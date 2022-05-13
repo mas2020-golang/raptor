@@ -88,7 +88,7 @@ func addSecret(name string) error {
 	if err := search(name); err != nil{
 		return err
 	}
-	utils.BoldOut("==> add a new secret (to skip type CTRL+D)\n")
+	utils.BoldOut("==> add a new secret (only for the NOTES: to save the press CTRL+D)\n")
 	utils.RedOut("(to exit without saving type CTRL+C)\n")
 	fmt.Println(strings.Repeat("_", 45))
 	if box.Secrets == nil {
