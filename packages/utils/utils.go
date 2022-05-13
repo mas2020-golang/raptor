@@ -47,12 +47,14 @@ func ReadPassword(text string) (string, error) {
 
 // Check checks if an error and exit
 func Check(err error, message string) {
+	var errorMsg string
 	if err != nil {
 		if len(message) > 0{
-			fmt.Printf("%s %s caused by %v\n", RedS("Error:"), message, err)
+			errorMsg = fmt.Sprintf("%s caused by %v", message, err)
 		}else{
-			fmt.Printf("%s %v\n", RedS("Error:"), err)
+			errorMsg = fmt.Sprintf("%v", err)
 		}
+		Error(errorMsg)
 		os.Exit(1)
 	}
 }
@@ -62,4 +64,28 @@ func GetText(reader *bufio.Reader) string {
 	text, _ := reader.ReadString('\n')
 	output := strings.Replace(text, "\n", "", -1)
 	return strings.Replace(output, "\r", "", -1)
+}
+
+// askForPassword asks for a password once or twice. Returns the key to use
+func AskForPassword(twice bool) (key string, err error) {
+	// ask for password
+	key, err = ReadPassword("Password: ")
+	if err != nil {
+		return "", err
+	}
+	fmt.Println("")
+	if twice {
+		key2, err := ReadPassword("Repeat the password:")
+		if err != nil {
+			return "", err
+		}
+		fmt.Println("")
+		if key != key2 {
+			return "", fmt.Errorf("the passwords need to be the same")
+		}
+	}
+	if len(key) < 6 {
+		return "", fmt.Errorf("the password is too short, use at least a 6 chars length")
+	}
+	return key, nil
 }
