@@ -41,7 +41,7 @@ func GetBytesFromPipe() *os.File {
 // ReadPassword reads the standard input in hidden mode
 func ReadPassword(text string) (string, error) {
 	fmt.Print(text)
-	buf, err := term.ReadPassword(0)
+	buf, err := term.ReadPassword(int(os.Stdin.Fd()))
 	return string(buf), err
 }
 
