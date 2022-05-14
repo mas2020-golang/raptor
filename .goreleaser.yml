@@ -42,5 +42,5 @@ brews:
       name: homebrew-cryptex
     folder: Formula
     homepage: https://github.com/mas2020-golang/cryptex
-    description: |
-    Secure your secrets with a powerful and easy to use CLI application
+    description: >
+      Secure your secrets with a powerful and easy to use CLI application
