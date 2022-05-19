@@ -2,10 +2,12 @@ package utils
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
-	"golang.org/x/term"
 	"os"
 	"strings"
+
+	"golang.org/x/term"
 )
 
 var (
@@ -49,9 +51,9 @@ func ReadPassword(text string) (string, error) {
 func Check(err error, message string) {
 	var errorMsg string
 	if err != nil {
-		if len(message) > 0{
+		if len(message) > 0 {
 			errorMsg = fmt.Sprintf("%s caused by %v", message, err)
-		}else{
+		} else {
 			errorMsg = fmt.Sprintf("%v", err)
 		}
 		Error(errorMsg)
@@ -66,26 +68,54 @@ func GetText(reader *bufio.Reader) string {
 	return strings.Replace(output, "\r", "", -1)
 }
 
-// askForPassword asks for a password once or twice. Returns the key to use
-func AskForPassword(twice bool) (key string, err error) {
-	// ask for password
-	key, err = ReadPassword("Password: ")
-	if err != nil {
-		return "", err
+// GetTextWithEsc returns a text read from a bufio.Reader interface object.
+// The delimiter is the char sequence >>
+func GetTextWithEsc(reader *bufio.Reader) string {
+	buf := bytes.Buffer{}
+	for {
+		b, err := reader.ReadByte()
+		if err != nil {
+			return "ERROR!"
+		} else {
+			buf.Write([]byte{b})
+			if buf.Len() >= 2 {
+				bytesBuf := buf.Bytes()
+				if bytesBuf[len(bytesBuf)-1] == 62 &&
+					bytesBuf[len(bytesBuf)-2] == 62 {
+					return string(bytesBuf)[0 : len(bytesBuf)-2]
+				}
+			}
+		}
 	}
-	fmt.Println("")
-	if twice {
-		key2, err := ReadPassword("Repeat the password:")
+}
+
+// askForPassword asks for a password once or twice. You can change
+// the default requested text. Returns the key to use
+func AskForPassword(text string, twice bool) (key string, err error) {
+	// only for debugging
+	if os.Getenv("CRYPTEX_DBGPWD") != "" {
+		key = os.Getenv("CRYPTEX_DBGPWD")
+	} else {
+		// ask for password
+		key, err = ReadPassword(text)
 		if err != nil {
 			return "", err
 		}
 		fmt.Println("")
-		if key != key2 {
-			return "", fmt.Errorf("the passwords need to be the same")
+		if twice {
+			key2, err := ReadPassword("Repeat the pwd:")
+			if err != nil {
+				return "", err
+			}
+			fmt.Println("")
+			if key != key2 {
+				return "", fmt.Errorf("the passwords need to be the same")
+			}
+		}
+		if len(key) < 6 {
+			return "", fmt.Errorf("the password is too short, use at least a 6 chars length")
 		}
 	}
-	if len(key) < 6 {
-		return "", fmt.Errorf("the password is too short, use at least a 6 chars length")
-	}
+
 	return key, nil
 }

@@ -6,8 +6,12 @@ package main
 
 import (
 	"github.com/mas2020-golang/cryptex/cmd"
+	"github.com/mas2020-golang/cryptex/packages/utils"
 )
 
+var GitCommit string
+
 func main() {
+	utils.GitCommit = GitCommit
 	cmd.Execute()
 }
