@@ -6,11 +6,12 @@ package secret
 
 import (
 	"fmt"
+	"regexp"
+	"time"
+
 	"github.com/mas2020-golang/cryptex/packages/protos"
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/spf13/cobra"
-	"regexp"
-	"time"
 )
 
 var (
@@ -88,7 +89,7 @@ func showItems(s *protos.Secret) {
 	if s.Others != nil && len(s.Others) > 0 {
 		//fmt.Println(" - items:")
 		for k, _ := range s.Others {
-			fmt.Printf("%-1s.%s\n","", utils.BoldS(k))
+			fmt.Printf("%-1s.%s\n", "", utils.BoldS(k))
 		}
 	}
 }

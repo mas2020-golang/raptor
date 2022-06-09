@@ -90,8 +90,8 @@ func addSecret(name string) error {
 		return err
 	}
 	utils.BoldOut("==> add a new secret (only for the NOTES: to save the press CTRL+D)\n")
-	utils.RedOut("(to exit without saving type CTRL+C)\n")
-	fmt.Println(strings.Repeat("_", 45))
+	utils.RedOut("(to exit without saving press CTRL+C)\n")
+	fmt.Println(utils.GreenS(strings.Repeat("-", 35)))
 	if box.Secrets == nil {
 		box.Secrets = make([]*protos.Secret, 0)
 	}
@@ -100,14 +100,17 @@ func addSecret(name string) error {
 	s.Name = name
 	// read from standard input
 	r := bufio.NewReader(os.Stdin)
-	fmt.Println(utils.BlueS("Name: "), name)
-	fmt.Printf(utils.BlueS("Version: "))
+	fmt.Println(utils.BlueS("Name:"), name)
+	fmt.Printf("%s [%s]: ", utils.BlueS("Version"), utils.BoldS("1.0.0"))
 	s.Version = utils.GetText(r)
-	fmt.Printf(utils.BlueS("Login: "))
+	if len(s.Version) == 0 {
+		s.Version = "1.0.0"
+	}
+	fmt.Print(utils.BlueS("Login: "))
 	s.Login = utils.GetText(r)
-	fmt.Printf(utils.BlueS("Password: "))
+	fmt.Print(utils.BlueS("Password: "))
 	s.Pwd = utils.GetText(r)
-	fmt.Printf(utils.BlueS("Url: "))
+	fmt.Print(utils.BlueS("Url: "))
 	s.Url = utils.GetText(r)
 	fmt.Println(utils.BlueS("Notes (to save type '>>' and press ENTER):"))
 	s.Notes = utils.GetTextWithEsc(r)
@@ -118,9 +121,9 @@ func addSecret(name string) error {
 	if answer == "Y" {
 		s.Others = make(map[string]string)
 		for {
-			fmt.Printf(utils.BlueS("Name: "))
+			fmt.Print(utils.BlueS("Name: "))
 			n := utils.GetText(r)
-			fmt.Printf(utils.BlueS("Value: "))
+			fmt.Print(utils.BlueS("Value: "))
 			v := utils.GetText(r)
 			s.Others[n] = v
 			fmt.Printf("\nDo you have other secres to add? [Y/n] ")
