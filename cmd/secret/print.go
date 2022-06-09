@@ -77,7 +77,7 @@ func showToStdOut(s *protos.Secret, unsecure bool) error {
 	fmt.Printf("%s\n%s\n", utils.BlueS("\nNotes:"), s.Notes)
 	fmt.Println(utils.BlueS(strings.Repeat("-", 35)))
 	if s.Others != nil && len(s.Others) > 0 {
-		utils.BoldOut(fmt.Sprintf("Items:\n"))
+		utils.BoldOut("Items:\n")
 		for k, v := range s.Others {
 			if unsecure {
 				fmt.Printf("%-2s.%s -> %s\n", "", utils.BlueS(k), v)
