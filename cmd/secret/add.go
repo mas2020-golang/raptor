@@ -100,9 +100,12 @@ func addSecret(name string) error {
 	s.Name = name
 	// read from standard input
 	r := bufio.NewReader(os.Stdin)
-	fmt.Println(utils.BlueS("Name: "), name)
-	fmt.Print(utils.BlueS("Version: "))
+	fmt.Println(utils.BlueS("Name:"), name)
+	fmt.Printf("%s [%s]: ", utils.BlueS("Version"), utils.BoldS("1.0.0"))
 	s.Version = utils.GetText(r)
+	if len(s.Version) == 0 {
+		s.Version = "1.0.0"
+	}
 	fmt.Print(utils.BlueS("Login: "))
 	s.Login = utils.GetText(r)
 	fmt.Print(utils.BlueS("Password: "))
