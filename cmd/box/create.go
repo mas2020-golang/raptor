@@ -6,15 +6,16 @@ package box
 
 import (
 	"fmt"
+	"io/ioutil"
+	"os"
+	"path"
+
 	"github.com/mas2020-golang/cryptex/packages/protos"
 	"github.com/mas2020-golang/cryptex/packages/security"
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/spf13/cobra"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"io/ioutil"
-	"os"
-	"path"
 )
 
 var (
@@ -77,7 +78,7 @@ func createBox(name, owner string) {
 	out, err := proto.Marshal(&b)
 	utils.Check(err, "failed to encode the box")
 	// ask for the password
-	key, err := utils.AskForPassword(true)
+	key, err := utils.AskForPassword("Password: ", true)
 	utils.Check(err, "")
 	// encrypt the box
 	encOut, err := security.EncryptBox(out, key)
@@ -88,5 +89,3 @@ func createBox(name, owner string) {
 	fmt.Println()
 	utils.Success(fmt.Sprintf("Box %q created successfully!", name))
 }
-
-

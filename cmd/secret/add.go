@@ -7,16 +7,17 @@ package secret
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
+	"os"
+	"path"
+	"strings"
+
 	"github.com/mas2020-golang/cryptex/packages/protos"
 	"github.com/mas2020-golang/cryptex/packages/security"
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/spf13/cobra"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"io/ioutil"
-	"os"
-	"path"
-	"strings"
 )
 
 var key string
@@ -52,9 +53,9 @@ func add(name string) {
 
 func openBox(name string) (string, error) {
 	// search the CRYPTEX_BOX env if name is empty
-	if len(name) == 0{
+	if len(name) == 0 {
 		name = os.Getenv("CRYPTEX_BOX")
-		if len(name) == 0{
+		if len(name) == 0 {
 			return "", fmt.Errorf("--box args is not given and the env var CRYPTEX_BOX is empty")
 		}
 	}
@@ -70,7 +71,7 @@ func openBox(name string) (string, error) {
 	}
 
 	// ask for the password
-	key, err = utils.AskForPassword(false)
+	key, err = utils.AskForPassword("Password: ", false)
 	utils.Check(err, "")
 	// encrypt the box
 	decIn, err := security.DecryptBox(in, key)
@@ -85,7 +86,7 @@ func openBox(name string) (string, error) {
 }
 
 func addSecret(name string) error {
-	if err := search(name); err != nil{
+	if err := search(name); err != nil {
 		return err
 	}
 	utils.BoldOut("==> add a new secret (only for the NOTES: to save the press CTRL+D)\n")
@@ -99,31 +100,30 @@ func addSecret(name string) error {
 	s.Name = name
 	// read from standard input
 	r := bufio.NewReader(os.Stdin)
-	fmt.Println(utils.BoldS("Name: "), name)
-	fmt.Printf(utils.BoldS("Version: "))
+	fmt.Println(utils.BlueS("Name: "), name)
+	fmt.Printf(utils.BlueS("Version: "))
 	s.Version = utils.GetText(r)
-	if len(s.Version) == 0 {
-		fmt.Println()
-	}
-	fmt.Printf(utils.BoldS("Login: "))
+	fmt.Printf(utils.BlueS("Login: "))
 	s.Login = utils.GetText(r)
-	fmt.Printf("Password: ")
+	fmt.Printf(utils.BlueS("Password: "))
 	s.Pwd = utils.GetText(r)
-	fmt.Printf("Url: ")
+	fmt.Printf(utils.BlueS("Url: "))
 	s.Url = utils.GetText(r)
-	fmt.Printf("Notes: ")
-	s.Notes = utils.GetText(r)
+	fmt.Println(utils.BlueS("Notes (to save type '>>' and press ENTER):"))
+	s.Notes = utils.GetTextWithEsc(r)
+	fmt.Println(utils.BlueS(strings.Repeat("-", 35)))
+	utils.GetText(r)
 	fmt.Printf("Do you have other secres to add? [Y/n] ")
 	answer := utils.GetText(r)
 	if answer == "Y" {
 		s.Others = make(map[string]string)
 		for {
-			fmt.Printf("Name: ")
+			fmt.Printf(utils.BlueS("Name: "))
 			n := utils.GetText(r)
-			fmt.Printf("Value: ")
+			fmt.Printf(utils.BlueS("Value: "))
 			v := utils.GetText(r)
 			s.Others[n] = v
-			fmt.Printf("Do you have other secres to add? [Y/n] ")
+			fmt.Printf("\nDo you have other secres to add? [Y/n] ")
 			answer = utils.GetText(r)
 			if answer != "Y" {
 				break
@@ -152,8 +152,8 @@ func saveBox(path string) error {
 // search goes into the secret and throws an error if a secret with the same
 // name already exists
 func search(name string) error {
-	for _, s := range box.Secrets{
-		if (*s).Name == name{
+	for _, s := range box.Secrets {
+		if (*s).Name == name {
 			return fmt.Errorf("a secret with the name %s already exists", name)
 		}
 	}

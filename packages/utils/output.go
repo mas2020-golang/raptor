@@ -86,6 +86,21 @@ func Success(text string) {
 	}
 }
 
+// Note returns a note formatted text
+func Note(text string) {
+	os := runtime.GOOS
+	switch os {
+	case "windows":
+		fmt.Printf("%s%s%s\n", GreenS("> "), text, Reset)
+	case "darwin":
+		fmt.Printf("%s%s%s\n", "👉 ", text, Reset)
+	case "linux":
+		fmt.Printf("%s%s%s\n", "✔ ", text, Reset)
+	default:
+		fmt.Printf("%s%s%s\n", GreenS("✔ "), text, Reset)
+	}
+}
+
 // Warning returns a warning string
 func Warning(text string) {
 	fmt.Printf("%s%s%s\n", YellowS("Warning: "), text, Reset)

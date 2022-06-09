@@ -6,7 +6,7 @@ package cmd
 
 import (
 	"github.com/mas2020-golang/cryptex/cmd/box"
-	"github.com/mas2020-golang/cryptex/cmd/box/secret"
+	"github.com/mas2020-golang/cryptex/cmd/secret"
 	"github.com/spf13/cobra"
 	"os"
 )

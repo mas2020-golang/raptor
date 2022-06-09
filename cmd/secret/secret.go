@@ -18,8 +18,8 @@ var (
 var SecretCmd = &cobra.Command{
 	Use:   "secret",
 	Short: "Manage the secrets",
-	Long: `Manage the secrets: you can create, delete and list your secrets in a specified box using this
-command`,
+	Long: `Manage the secrets: you can create, delete and list your secrets in the 
+specified box using this command.`,
 }
 
 func init() {
@@ -28,6 +28,7 @@ func init() {
 	SecretCmd.AddCommand(listCmd)
 	SecretCmd.AddCommand(getCmd)
 	SecretCmd.AddCommand(printCmd)
+	SecretCmd.AddCommand(editCmd)
 	SecretCmd.PersistentFlags().StringVarP(&boxName, "box", "b", "", "The name of the box where to add the secret")
 	//SecretCmd.MarkPersistentFlagRequired("box")
 }
