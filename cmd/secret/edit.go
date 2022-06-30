@@ -81,6 +81,13 @@ func editSecret(name string) error {
 	input, err := utils.ReadPassword("")
 	utils.Check(err, "")
 	if len(input) != 0 {
+		fmt.Printf("\n%s [%s]: ", utils.BlueS("Confirm pwd"), utils.BoldS("xxx"))
+		input2, err := utils.ReadPassword("")
+		utils.Check(err, "")
+		if input != input2 {
+			fmt.Println()
+			return fmt.Errorf("the pwd mismatched")
+		}
 		s.Pwd = input
 	}
 	fmt.Printf("\n%s [%s]: ", utils.BlueS("Url"), utils.BoldS(s.Url))
