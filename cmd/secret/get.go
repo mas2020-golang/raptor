@@ -6,11 +6,12 @@ package secret
 
 import (
 	"fmt"
-	"github.com/mas2020-golang/cryptex/packages/utils"
-	"github.com/spf13/cobra"
 	"os/exec"
 	"runtime"
 	"strings"
+
+	"github.com/mas2020-golang/cryptex/packages/utils"
+	"github.com/spf13/cobra"
 )
 
 // boxCmd represents the box command
@@ -19,12 +20,10 @@ var getCmd = &cobra.Command{
 	Args:  cobra.MinimumNArgs(1),
 	Short: "Get the sensitive info from a secret",
 	Long: `Get the sensitive info from a secret. You can refer to the data as:
-- <SECRET>.pwd|pwd: retrieves the root pwd for the secret
-- <SECRET>.items.<NAME>: retrieves  the pwd for the specified item into the secret
-In case you do not specify anything then the name, the secret pwd is retrieved.`,
+- <SECRET_NAME>: retrieves the root pwd for the secret
+- <SECRET_NAME>.<ITEM_NAME>: retrieves the ITEM_NAME in the items collection`,
 	Example: `$ cryptex secret get foo --box test // to retrieve the pwd of the foo secret
-$ cryptex secret get foo.pwd --box test // to retrieve the pwd of the foo secret
-$ cryptex secret get foo.items.CC --box test // to retrieve the CC from any of the items in the foo secret`,
+$ cryptex secret get foo.test --box test // to retrieve the test secret item of the foo secret`,
 	Run: func(cmd *cobra.Command, args []string) {
 		get(args[0])
 	},
@@ -51,7 +50,7 @@ func get(name string) {
 }
 
 // searchSecretPwd searches for the secret and the value:
-// e.g. foo, foo.items.pwd
+// e.g. foo, foo.test
 func searchSecretPwd(name string) (value string, err error) {
 	var (
 		secretName, secretItem string
