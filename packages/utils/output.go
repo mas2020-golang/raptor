@@ -11,7 +11,7 @@ const (
 	Blue     = "\033[34m"
 	Orange   = "\033[38;5;167m"
 	Green    = "\033[32m"
-	Red = "\033[31m"
+	Red      = "\033[31m"
 	LightRed = "\033[91m"
 	Yellow   = "\033[33m"
 )
@@ -106,7 +106,7 @@ func Warning(text string) {
 	fmt.Printf("%s%s%s\n", YellowS("Warning: "), text, Reset)
 }
 
-// Warning returns a warning string
+// Error returns a error string
 func Error(text string) {
-	fmt.Printf("%s%s%s\n", LightRedS("Error: "), text, Reset)
+	fmt.Printf("%s%s%s\n", RedS("Error: "), text, Reset)
 }
