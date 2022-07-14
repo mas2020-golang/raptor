@@ -57,7 +57,7 @@ func editSecret(name string) error {
 		return fmt.Errorf("the secret doesn't exist")
 	}
 
-	utils.Note(utils.BoldS("press ENTER without typing to skip the field"))
+	utils.Note(utils.BoldS("\npress ENTER without typing to skip the field"))
 	utils.RedOut("(to exit without saving type CTRL+C)\n")
 	fmt.Println(strings.Repeat("-", 35))
 	// read from standard input

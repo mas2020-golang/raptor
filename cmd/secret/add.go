@@ -89,7 +89,7 @@ func addSecret(name string) error {
 	if err := search(name); err != nil {
 		return err
 	}
-	utils.BoldOut("==> add a new secret (only for the NOTES: to save the press CTRL+D)\n")
+	utils.BoldOut("\n==> adding a new secret\n")
 	utils.RedOut("(to exit without saving press CTRL+C)\n")
 	fmt.Println(utils.GreenS(strings.Repeat("-", 35)))
 	if box.Secrets == nil {
@@ -109,8 +109,19 @@ func addSecret(name string) error {
 	fmt.Print(utils.BlueS("Login: "))
 	s.Login = utils.GetText(r)
 	fmt.Print(utils.BlueS("Password: "))
-	s.Pwd = utils.GetText(r)
-	fmt.Print(utils.BlueS("Url: "))
+	input, err := utils.ReadPassword("")
+	utils.Check(err, "")
+	if len(input) != 0 {
+		fmt.Printf("\n%s [%s]: ", utils.BlueS("Confirm pwd"), utils.BoldS("xxx"))
+		input2, err := utils.ReadPassword("")
+		utils.Check(err, "")
+		if input != input2 {
+			fmt.Println()
+			return fmt.Errorf("the pwd mismatched")
+		}
+		s.Pwd = input
+	}
+	fmt.Print(utils.BlueS("\nUrl: "))
 	s.Url = utils.GetText(r)
 	fmt.Println(utils.BlueS("Notes (to save type '>>' and press ENTER):"))
 	s.Notes = utils.GetTextWithEsc(r)
