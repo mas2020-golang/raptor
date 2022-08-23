@@ -36,7 +36,7 @@ func init() {
 
 func print(name string) {
 	// open the box
-	_, err := openBox(boxName)
+	_, err := openBox()
 	utils.Check(err, "")
 	s, err := getSecret(name)
 	utils.Check(err, "")

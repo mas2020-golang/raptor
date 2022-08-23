@@ -34,7 +34,7 @@ func init() {
 
 func get(name string) {
 	// open the box
-	_, err := openBox(boxName)
+	_, err := openBox()
 	utils.Check(err, "")
 	s, err := searchSecretPwd(name)
 	utils.Check(err, "")
