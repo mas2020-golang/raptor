@@ -38,7 +38,7 @@ func init() {
 
 func edit(name string) {
 	// open the box
-	boxPath, err := openBox(boxName)
+	boxPath, err := openBox()
 	utils.Check(err, "")
 	// add the secret
 	err = editSecret(name)
