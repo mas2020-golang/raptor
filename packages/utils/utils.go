@@ -4,10 +4,15 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"path"
 	"strings"
 
+	"github.com/mas2020-golang/cryptex/packages/protos"
+	"github.com/mas2020-golang/cryptex/packages/security"
 	"golang.org/x/term"
+	"google.golang.org/protobuf/proto"
 )
 
 var (
@@ -118,4 +123,78 @@ func AskForPassword(text string, twice bool) (key string, err error) {
 	}
 
 	return key, nil
+}
+
+// getFolderBox returns the box folder
+func GetFolderBox() (string, error) {
+	// check the folder .cryptex
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+	// read the file in the home dir
+	if len(os.Getenv("CRYPTEX_FOLDER")) > 0 {
+		return os.Getenv("CRYPTEX_FOLDER"), nil
+	} else {
+		// read the file in the home dir
+		return path.Join(home, ".cryptex", "boxes"), nil
+	}
+}
+
+// OpenBox opens a box
+func OpenBox(boxName string) (string, string, *protos.Box, error) {
+	var boxPath string
+	// search the CRYPTEX_BOX env if name is empty
+	if len(boxName) == 0 {
+		boxName = os.Getenv("CRYPTEX_BOX")
+		if len(boxName) == 0 {
+			return "", "", nil, fmt.Errorf("--box args is not given and the env var CRYPTEX_BOX is empty")
+		}
+	}
+	// get the folder box
+	boxFolder, err := GetFolderBox()
+	if err != nil {
+		return "", "", nil, fmt.Errorf("problem to determine th folder box: %v", err)
+	}
+
+	// read the box
+	boxPath = path.Join(boxFolder, boxName)
+	in, err := ioutil.ReadFile(boxPath)
+	if err != nil {
+		return "", "", nil, fmt.Errorf("reading the file box in %s: %v", boxPath, err)
+	}
+
+	// ask for the password
+	key, err := AskForPassword("Password: ", false)
+	if err != nil {
+		return "", "", nil, err
+	}
+	// encrypt the box
+	decIn, err := security.DecryptBox(in, key)
+	if err != nil {
+		return "", "", nil, fmt.Errorf("decrypting the file box in %s: %v", boxPath, err)
+	}
+
+	box := &protos.Box{}
+	err = proto.Unmarshal(decIn, box)
+	if err != nil {
+		return "", "", nil, fmt.Errorf("failed to read the box: %v. Maybe an incorrect pwd?", err)
+	}
+	return boxPath, key, box, nil
+}
+
+func SaveBox(path, key string, box *protos.Box) error {
+	out, err := proto.Marshal(box)
+	if err != nil {
+		return fmt.Errorf("failed to encode the box: %v", err)
+	}
+	// encrypt the box
+	encOut, err := security.EncryptBox(out, key)
+	if err := ioutil.WriteFile(path, encOut, 0644); err != nil {
+		return fmt.Errorf("failed to encrypt the box: %v", err)
+	}
+	if err := ioutil.WriteFile(path, encOut, 0644); err != nil {
+		return fmt.Errorf("failed to write the box: %v", err)
+	}
+	return nil
 }
