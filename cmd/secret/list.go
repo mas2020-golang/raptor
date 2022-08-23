@@ -43,7 +43,7 @@ func list() {
 	loc, err := time.LoadLocation("Local")
 	utils.Check(err, "")
 	// open the box
-	_, err = openBox(boxName)
+	n, err := openBox()
 	utils.Check(err, "")
 	// get the max length for the NAME, LOGIN attribute
 	maxName := getMaxNameLenght()
@@ -81,6 +81,7 @@ func list() {
 			showItems(s)
 		}
 	}
+	fmt.Printf("\n%s secret read from the %s box\n", utils.YellowS("--"), utils.BlueS(n))
 }
 
 func showItems(s *protos.Secret) {

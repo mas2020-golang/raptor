@@ -39,7 +39,7 @@ func init() {
 
 func add(name string) {
 	// open the box
-	boxPath, err := openBox(boxName)
+	boxPath, err := openBox()
 	utils.Check(err, "")
 	// add the secret
 	err = addSecret(name)
@@ -51,11 +51,11 @@ func add(name string) {
 	utils.Success(utils.BoldS("box saved!"))
 }
 
-func openBox(name string) (string, error) {
+func openBox() (string, error) {
 	// search the CRYPTEX_BOX env if name is empty
-	if len(name) == 0 {
-		name = os.Getenv("CRYPTEX_BOX")
-		if len(name) == 0 {
+	if len(boxName) == 0 {
+		boxName = os.Getenv("CRYPTEX_BOX")
+		if len(boxName) == 0 {
 			return "", fmt.Errorf("--box args is not given and the env var CRYPTEX_BOX is empty")
 		}
 	}
@@ -63,7 +63,7 @@ func openBox(name string) (string, error) {
 	home, err := os.UserHomeDir()
 	utils.Check(err, "")
 	// read the file in the home dir
-	path := path.Join(home, ".cryptex", "boxes", name)
+	path := path.Join(home, ".cryptex", "boxes", boxName)
 	// Read the existing address book.
 	in, err := ioutil.ReadFile(path)
 	if err != nil {
