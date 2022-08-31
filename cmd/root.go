@@ -5,11 +5,12 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"github.com/mas2020-golang/cryptex/cmd/box"
-	"github.com/mas2020-golang/cryptex/cmd/secret"
-	"github.com/spf13/cobra"
 	"os"
+
+	"github.com/spf13/cobra"
 )
+
+var verbose bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -36,17 +37,11 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.AddCommand(box.BoxCmd)
-	rootCmd.AddCommand(secret.SecretCmd)
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
+	rootCmd.AddCommand(newCreateCmd())
+	rootCmd.AddCommand(newListCmd())
+	rootCmd.AddCommand(newEditCmd())
+	rootCmd.AddCommand(newGetCmd())
+	rootCmd.AddCommand(newPrintCmd())
 
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cryptex.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
-
-
