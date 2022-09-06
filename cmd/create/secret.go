@@ -12,6 +12,7 @@ import (
 
 	"github.com/mas2020-golang/cryptex/packages/protos"
 	"github.com/mas2020-golang/cryptex/packages/utils"
+	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -46,16 +47,16 @@ func add(name string) {
 	// save the box
 	err = utils.SaveBox(boxPath, key, box)
 	utils.Check(err, "")
-	utils.Success(utils.BoldS("box saved!"))
+	utils.Success(output.BoldS("box saved!"))
 }
 
 func addSecret(name string, box *protos.Box) error {
 	if err := search(name, box); err != nil {
 		return err
 	}
-	utils.BoldOut("\n==> adding a new secret\n")
-	utils.RedOut("(to exit without saving press CTRL+C)\n")
-	fmt.Println(utils.GreenS(strings.Repeat("-", 35)))
+	output.Bold("\n==> adding a new secret\n")
+	output.RedOut("(to exit without saving press CTRL+C)\n")
+	fmt.Println(output.GreenS(strings.Repeat("-", 35)))
 	if box.Secrets == nil {
 		box.Secrets = make([]*protos.Secret, 0)
 	}
@@ -64,19 +65,19 @@ func addSecret(name string, box *protos.Box) error {
 	s.Name = name
 	// read from standard input
 	r := bufio.NewReader(os.Stdin)
-	fmt.Println(utils.BlueS("Name:"), name)
-	fmt.Printf("%s [%s]: ", utils.BlueS("Version"), utils.BoldS("1.0.0"))
+	fmt.Println(output.BlueS("Name:"), name)
+	fmt.Printf("%s [%s]: ", output.BlueS("Version"), output.BoldS("1.0.0"))
 	s.Version = utils.GetText(r)
 	if len(s.Version) == 0 {
 		s.Version = "1.0.0"
 	}
-	fmt.Print(utils.BlueS("Login: "))
+	fmt.Print(output.BlueS("Login: "))
 	s.Login = utils.GetText(r)
-	fmt.Print(utils.BlueS("Password: "))
+	fmt.Print(output.BlueS("Password: "))
 	input, err := utils.ReadPassword("")
 	utils.Check(err, "")
 	if len(input) != 0 {
-		fmt.Printf("\n%s [%s]: ", utils.BlueS("Confirm pwd"), utils.BoldS("xxx"))
+		fmt.Printf("\n%s [%s]: ", output.BlueS("Confirm pwd"), output.BoldS("xxx"))
 		input2, err := utils.ReadPassword("")
 		utils.Check(err, "")
 		if input != input2 {
@@ -85,20 +86,20 @@ func addSecret(name string, box *protos.Box) error {
 		}
 		s.Pwd = input
 	}
-	fmt.Print(utils.BlueS("\nUrl: "))
+	fmt.Print(output.BlueS("\nUrl: "))
 	s.Url = utils.GetText(r)
-	fmt.Println(utils.BlueS("Notes (to save type '>>' and press ENTER):"))
+	fmt.Println(output.BlueS("Notes (to save type '>>' and press ENTER):"))
 	s.Notes = utils.GetTextWithEsc(r)
-	fmt.Println(utils.BlueS(strings.Repeat("-", 35)))
+	fmt.Println(output.BlueS(strings.Repeat("-", 35)))
 	utils.GetText(r)
 	fmt.Printf("Do you have other secres to add? [Y/n] ")
 	answer := utils.GetText(r)
 	if answer == "Y" {
 		s.Others = make(map[string]string)
 		for {
-			fmt.Print(utils.BlueS("Name: "))
+			fmt.Print(output.BlueS("Name: "))
 			n := utils.GetText(r)
-			fmt.Print(utils.BlueS("Value: "))
+			fmt.Print(output.BlueS("Value: "))
 			v := utils.GetText(r)
 			s.Others[n] = v
 			fmt.Printf("\nDo you have other secres to add? [Y/n] ")
