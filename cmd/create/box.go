@@ -13,6 +13,7 @@ import (
 	"github.com/mas2020-golang/cryptex/packages/protos"
 	"github.com/mas2020-golang/cryptex/packages/security"
 	"github.com/mas2020-golang/cryptex/packages/utils"
+	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -33,7 +34,7 @@ it doesn't exist yet`,
 	Example: `$ cryptex box create 'test' --owner me`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := create(args); err != nil {
-			utils.Error(err.Error())
+			output.Error("", err.Error())
 			os.Exit(1)
 		}
 	},

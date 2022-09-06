@@ -11,6 +11,7 @@ import (
 
 	"github.com/mas2020-golang/cryptex/packages/protos"
 	"github.com/mas2020-golang/cryptex/packages/utils"
+	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
 )
 
@@ -68,32 +69,32 @@ func showToStdOut(s *protos.Secret, unsecure bool, cmd *cobra.Command, boxPath s
 		return err
 	}
 	lastUpdated := s.LastUpdated.AsTime().In(loc).Format("Jan 2 15:04 2006 MST")
-	fmt.Println(utils.GreenS(strings.Repeat("-", 35)))
-	fmt.Printf("%s %s\n", utils.BlueS("Version:"), s.Version)
-	fmt.Printf("%s %s\n", utils.BlueS("Login:"), s.Login)
+	fmt.Println(output.GreenS(strings.Repeat("-", 35)))
+	fmt.Printf("%s %s\n", output.BlueS("Version:"), s.Version)
+	fmt.Printf("%s %s\n", output.BlueS("Login:"), s.Login)
 	if unsecure {
-		fmt.Printf("%s %s\n", utils.BlueS("Pwd:"), s.Pwd)
+		fmt.Printf("%s %s\n", output.BlueS("Pwd:"), s.Pwd)
 	} else {
-		fmt.Printf("%s %s\n", utils.BlueS("Pwd:"), "xxx")
+		fmt.Printf("%s %s\n", output.BlueS("Pwd:"), "xxx")
 	}
-	fmt.Printf("%s %s\n", utils.BlueS("Url:"), s.Url)
-	fmt.Printf("%s\n%s\n", utils.BlueS("\nNotes:"), s.Notes)
-	fmt.Println(utils.BlueS(strings.Repeat("-", 35)))
+	fmt.Printf("%s %s\n", output.BlueS("Url:"), s.Url)
+	fmt.Printf("%s\n%s\n", output.BlueS("\nNotes:"), s.Notes)
+	fmt.Println(output.BlueS(strings.Repeat("-", 35)))
 	if s.Others != nil && len(s.Others) > 0 {
-		utils.BoldOut("Items:\n")
+		output.Bold("Items:\n")
 		for k, v := range s.Others {
 			if unsecure {
-				fmt.Printf("%-2s.%s -> %s\n", "", utils.BlueS(k), v)
+				fmt.Printf("%-2s.%s -> %s\n", "", output.BlueS(k), v)
 			} else {
-				fmt.Printf("%-2s.%s\n", "", utils.BlueS(k))
+				fmt.Printf("%-2s.%s\n", "", output.BlueS(k))
 			}
 		}
 	}
-	fmt.Printf("%s %s\n", utils.BoldS("\nUpdated on:"), lastUpdated)
+	fmt.Printf("%s %s\n", output.BoldS("\nUpdated on:"), lastUpdated)
 	v, _ := cmd.Parent().Flags().GetBool("verbose")
 	if v {
-		fmt.Printf("\n%s\n", utils.YellowS("additional info:"))
-		fmt.Printf("%s secret from the box %s\n", utils.YellowS("--"), boxPath)
+		fmt.Printf("\n%s\n", output.YellowS("additional info:"))
+		output.InfoBox(fmt.Sprintf("secret read from the %s box\n", output.BlueS(boxPath)))
 	}
 
 	return nil

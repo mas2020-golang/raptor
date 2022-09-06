@@ -11,6 +11,7 @@ import (
 
 	"github.com/mas2020-golang/cryptex/packages/protos"
 	"github.com/mas2020-golang/cryptex/packages/utils"
+	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
 )
 
@@ -61,12 +62,12 @@ func listSecrets(cmd *cobra.Command) {
 		if len(s.Url) > 44 {
 			s.Url = s.Url[0:42] + "..."
 		}
-		s.Url = utils.BlueS(fmt.Sprintf("%-47s", s.Url))
+		s.Url = output.BlueS(fmt.Sprintf("%-47s", s.Url))
 		if len(s.Notes) > 30 {
 			s.Notes = s.Notes[0:26] + "..."
 		}
 		nameFormatS := fmt.Sprintf("%s%ds", "%-", maxName+2)
-		s.Name = utils.RedS(utils.BoldS(fmt.Sprintf(nameFormatS, s.Name)))
+		s.Name = output.RedS(output.BoldS(fmt.Sprintf(nameFormatS, s.Name)))
 		lastUpdated := s.LastUpdated.AsTime().In(loc).Format("Jan 2 15:04 2006 MST")
 		// check the name flag
 		if len(filter) > 0 {
@@ -84,7 +85,8 @@ func listSecrets(cmd *cobra.Command) {
 	}
 	v, _ := (*cmd).Parent().Flags().GetBool("verbose")
 	if v {
-		fmt.Printf("\n%s secret read from the %s box\n", utils.YellowS("--"), utils.BlueS(boxPath))
+		fmt.Println()
+		output.InfoBox(fmt.Sprintf("secret read from the %s box\n", output.BlueS(boxPath)))
 	}
 }
 
@@ -95,7 +97,7 @@ func showItems(s *protos.Secret) {
 	if s.Others != nil && len(s.Others) > 0 {
 		//fmt.Println(" - items:")
 		for k, _ := range s.Others {
-			fmt.Printf("%-1s.%s\n", "", utils.BoldS(k))
+			fmt.Printf("%-1s.%s\n", "", output.BoldS(k))
 		}
 	}
 }

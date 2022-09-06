@@ -12,6 +12,7 @@ import (
 
 	"github.com/mas2020-golang/cryptex/packages/protos"
 	"github.com/mas2020-golang/cryptex/packages/utils"
+	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -49,7 +50,7 @@ func edit(name string) {
 	// save the box
 	err = utils.SaveBox(boxPath, key, box)
 	utils.Check(err, "")
-	utils.Success(utils.BoldS("box saved!"))
+	utils.Success(output.BoldS("box saved!"))
 }
 
 func editSecret(name string, box *protos.Box, boxPath string) error {
@@ -59,31 +60,31 @@ func editSecret(name string, box *protos.Box, boxPath string) error {
 		return fmt.Errorf("the secret %q doesn't exist in the box %q", name, boxPath)
 	}
 
-	utils.Note(utils.BoldS("\npress ENTER without typing to skip the field"))
-	utils.RedOut("(to exit without saving type CTRL+C)\n")
+	utils.Note(output.BoldS("\npress ENTER without typing to skip the field"))
+	output.RedOut("(to exit without saving type CTRL+C)\n")
 	fmt.Println(strings.Repeat("-", 35))
 	// read from standard input
 	r := bufio.NewReader(os.Stdin)
-	fmt.Printf("%s [%s]: ", utils.BlueS("Name"), utils.BoldS(s.Name))
+	fmt.Printf("%s [%s]: ", output.BlueS("Name"), output.BoldS(s.Name))
 	input := utils.GetText(r)
 	if len(input) != 0 {
 		s.Name = input
 	}
-	fmt.Printf("%s [%s]: ", utils.BlueS("Version"), utils.BoldS(s.Version))
+	fmt.Printf("%s [%s]: ", output.BlueS("Version"), output.BoldS(s.Version))
 	input = utils.GetText(r)
 	if len(input) != 0 {
 		s.Version = input
 	}
-	fmt.Printf("%s [%s]: ", utils.BlueS("Login"), utils.BoldS(s.Login))
+	fmt.Printf("%s [%s]: ", output.BlueS("Login"), output.BoldS(s.Login))
 	input = utils.GetText(r)
 	if len(input) != 0 {
 		s.Login = input
 	}
-	fmt.Printf("%s [%s]: ", utils.BlueS("Pwd"), utils.BoldS("xxx"))
+	fmt.Printf("%s [%s]: ", output.BlueS("Pwd"), output.BoldS("xxx"))
 	input, err := utils.ReadPassword("")
 	utils.Check(err, "")
 	if len(input) != 0 {
-		fmt.Printf("\n%s [%s]: ", utils.BlueS("Confirm pwd"), utils.BoldS("xxx"))
+		fmt.Printf("\n%s [%s]: ", output.BlueS("Confirm pwd"), output.BoldS("xxx"))
 		input2, err := utils.ReadPassword("")
 		utils.Check(err, "")
 		if input != input2 {
@@ -92,26 +93,26 @@ func editSecret(name string, box *protos.Box, boxPath string) error {
 		}
 		s.Pwd = input
 	}
-	fmt.Printf("\n%s [%s]: ", utils.BlueS("Url"), utils.BoldS(s.Url))
+	fmt.Printf("\n%s [%s]: ", output.BlueS("Url"), output.BoldS(s.Url))
 	input = utils.GetText(r)
 	if len(input) != 0 {
 		s.Url = input
 	}
-	fmt.Printf("%s:\n%s\n", utils.BlueS("Notes"), s.Notes)
-	fmt.Println(utils.BlueS(strings.Repeat("-", 35)))
+	fmt.Printf("%s:\n%s\n", output.BlueS("Notes"), s.Notes)
+	fmt.Println(output.BlueS(strings.Repeat("-", 35)))
 	fmt.Printf("Do you want to change the notes? [Y/n] ")
 	answer := utils.GetText(r)
 	if answer == "Y" {
-		fmt.Println(utils.BlueS("\nNew Notes: (to save type '>>' and press ENTER)"))
+		fmt.Println(output.BlueS("\nNew Notes: (to save type '>>' and press ENTER)"))
 		input = utils.GetTextWithEsc(r)
 		if len(input) != 0 && input != "ERROR!" {
 			s.Notes = input
 		}
-		fmt.Println(utils.BlueS(strings.Repeat("-", 35)))
+		fmt.Println(output.BlueS(strings.Repeat("-", 35)))
 		utils.GetText(r)
 	}
 	if s.Others != nil {
-		utils.BlueOut(fmt.Sprintf("\nItems:\n"))
+		output.BlueOut(fmt.Sprintf("\nItems:\n"))
 		for k, v := range s.Others {
 			fmt.Printf("%s [%s]: ", k, v)
 			input = utils.GetText(r)
