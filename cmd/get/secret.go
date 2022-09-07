@@ -12,6 +12,7 @@ import (
 
 	"github.com/mas2020-golang/cryptex/packages/protos"
 	"github.com/mas2020-golang/cryptex/packages/utils"
+	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
 )
 
@@ -44,14 +45,14 @@ func get(name string) {
 	s, err := searchSecretPwd(name, box)
 	utils.Check(err, "")
 	if len(s) == 0 {
-		utils.Warning(fmt.Sprintf("no secret %q found in %s", name, boxName))
+		output.Warning("", fmt.Sprintf("no secret %q found in %s", name, boxName))
 		return
 	}
 	// copy the secret into the clipboard
 	err = execCmd(s)
 	utils.Check(err, "")
 	fmt.Println()
-	utils.Success(utils.BoldS("the secret is in your clipboard"))
+	utils.Success(output.BoldS("the secret is in your clipboard"))
 }
 
 // searchSecretPwd searches for the secret and the value:

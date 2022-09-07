@@ -11,6 +11,7 @@ import (
 
 	"github.com/mas2020-golang/cryptex/packages/protos"
 	"github.com/mas2020-golang/cryptex/packages/security"
+	"github.com/mas2020-golang/goutils/output"
 	"golang.org/x/term"
 	"google.golang.org/protobuf/proto"
 )
@@ -61,7 +62,7 @@ func Check(err error, message string) {
 		} else {
 			errorMsg = fmt.Sprintf("%v", err)
 		}
-		Error(errorMsg)
+		output.Error("", errorMsg)
 		os.Exit(1)
 	}
 }

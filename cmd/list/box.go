@@ -11,6 +11,7 @@ import (
 	"regexp"
 
 	"github.com/mas2020-golang/cryptex/packages/utils"
+	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
 )
 
@@ -55,6 +56,7 @@ func listBoxes(cmd *cobra.Command) {
 	}
 	v, _ := cmd.Parent().Flags().GetBool("verbose")
 	if v {
-		fmt.Printf("\n%s box folder set to %s\n", utils.YellowS("--"), utils.BlueS(folderBox))
+		fmt.Println()
+		output.InfoBox(fmt.Sprintf("box folder set to %s\n", output.BlueS(folderBox)))
 	}
 }
