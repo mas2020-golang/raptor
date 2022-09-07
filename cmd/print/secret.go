@@ -81,7 +81,7 @@ func showToStdOut(s *protos.Secret, unsecure bool, cmd *cobra.Command, boxPath s
 	fmt.Printf("%s\n%s\n", output.BlueS("\nNotes:"), s.Notes)
 	fmt.Println(output.BlueS(strings.Repeat("-", 35)))
 	if s.Others != nil && len(s.Others) > 0 {
-		output.Bold("Items:\n")
+		output.Bold("Items:")
 		for k, v := range s.Others {
 			if unsecure {
 				fmt.Printf("%-2s.%s -> %s\n", "", output.BlueS(k), v)

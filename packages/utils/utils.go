@@ -97,7 +97,7 @@ func GetTextWithEsc(reader *bufio.Reader) string {
 
 // askForPassword asks for a password once or twice. You can change
 // the default requested text. Returns the key to use
-func AskForPassword(text string, twice bool) (key string, err error) {
+func AskForPassword(text string, twice bool, minLength int8) (key string, err error) {
 	// only for debugging
 	if os.Getenv("CRYPTEX_DBGPWD") != "" {
 		key = os.Getenv("CRYPTEX_DBGPWD")
@@ -118,8 +118,8 @@ func AskForPassword(text string, twice bool) (key string, err error) {
 				return "", fmt.Errorf("the passwords need to be the same")
 			}
 		}
-		if len(key) < 6 {
-			return "", fmt.Errorf("the password is too short, use at least a 6 chars length")
+		if len(key) < int(minLength) {
+			return "", fmt.Errorf("the password is too short, use at least a %d chars length", minLength)
 		}
 	}
 
@@ -166,7 +166,7 @@ func OpenBox(boxName string) (string, string, *protos.Box, error) {
 	}
 
 	// ask for the password
-	key, err := AskForPassword("Password: ", false)
+	key, err := AskForPassword("Box password: ", false, 0)
 	if err != nil {
 		return "", "", nil, err
 	}

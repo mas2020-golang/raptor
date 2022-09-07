@@ -1,0 +1,83 @@
+/*
+Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+
+*/
+package cmd
+
+import (
+	"fmt"
+
+	"github.com/mas2020-golang/cryptex/packages/utils"
+	"github.com/mas2020-golang/goutils/output"
+	"github.com/spf13/cobra"
+	"google.golang.org/protobuf/types/known/timestamppb"
+)
+
+var secretName string
+
+func newAddItemCmd() *cobra.Command {
+	c := &cobra.Command{
+		Use:     "add-item <NAME>",
+		Args:    cobra.MinimumNArgs(1),
+		Short:   "Add an item to a secret",
+		Long:    `You can add an item to the items collection of the given secret`,
+		Example: "cryptex add-item 'my-new-item' --secret first-secret --box test-box",
+		Run: func(cmd *cobra.Command, args []string) {
+			err := addItem(args[0])
+			if err != nil {
+				output.Error("", fmt.Sprintf("an error occurred during the item add: %s", err))
+			}
+		},
+	}
+
+	// Here you will define your flags and configuration settings.
+	c.PersistentFlags().StringVarP(&boxName, "box", "b", "", "The name of the box")
+	c.Flags().StringVarP(&secretName, "secret", "s", "", "The name of the secret where to add the item")
+	c.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "to get more information use the verbose mode")
+
+	c.MarkFlagRequired("secret")
+	return c
+}
+
+func addItem(name string) error {
+	found := false
+	// open the box
+	boxPath, key, box, err := utils.OpenBox(boxName)
+	if err != nil {
+		return err
+	}
+
+	// search for the secret
+	for _, s := range box.Secrets {
+		if s.Name == secretName {
+			found = true
+			if _, ok := s.Others[name]; ok {
+				return fmt.Errorf("the item already exists for the --secret %s", secretName)
+			}
+
+			// add the new item
+			pwd, err := utils.AskForPassword("Item password: ", true, 1)
+			if err != nil {
+				return err
+			}
+			s.Others[name] = pwd
+			s.LastUpdated = timestamppb.Now()
+			// save the box
+			err = utils.SaveBox(boxPath, key, box)
+			if err != nil {
+				return err
+			}
+			fmt.Println()
+			utils.Success(output.BoldS("new item saved!"))
+			if verbose {
+				fmt.Println()
+				output.InfoBox(fmt.Sprintf("item added to %q into the box %s\n", secretName, output.BlueS(boxPath)))
+			}
+		}
+	}
+	if !found {
+		return fmt.Errorf("no secret %q found for the box %q", secretName, output.BlueS(boxPath))
+	}
+
+	return nil
+}

@@ -94,7 +94,7 @@ func createBox(name, owner string) error {
 		return fmt.Errorf("failed to encode the box: %v", err)
 	}
 	// ask for the password
-	key, err := utils.AskForPassword("Password: ", true)
+	key, err := utils.AskForPassword("Password: ", true, 6)
 	if err != nil {
 		return err
 	}
