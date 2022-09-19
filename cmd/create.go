@@ -19,6 +19,7 @@ to an existing secret as well`,
 	// Here you will define your flags and configuration settings.
 	c.AddCommand(create.AddBoxCmd)
 	c.AddCommand(create.AddSecretCmd)
+	c.AddCommand(create.NewAddItemCmd())
 	c.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "to get more information use the verbose mode")
 
 	return c

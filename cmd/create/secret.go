@@ -17,7 +17,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-var key, boxName string
+var boxName string
 
 // boxCmd represents the box command
 var AddSecretCmd = &cobra.Command{

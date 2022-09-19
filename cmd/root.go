@@ -42,7 +42,5 @@ func init() {
 	rootCmd.AddCommand(newEditCmd())
 	rootCmd.AddCommand(newGetCmd())
 	rootCmd.AddCommand(newPrintCmd())
-	rootCmd.AddCommand(newAddItemCmd())
-
 	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

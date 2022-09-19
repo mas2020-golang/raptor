@@ -2,7 +2,7 @@
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 
 */
-package cmd
+package create
 
 import (
 	"fmt"
@@ -16,15 +16,15 @@ import (
 
 var secretName string
 
-func newAddItemCmd() *cobra.Command {
+func NewAddItemCmd() *cobra.Command {
 	c := &cobra.Command{
-		Use:     "add-item <NAME>",
+		Use:     "item <NAME>",
 		Args:    cobra.MinimumNArgs(1),
 		Short:   "Add an item to a secret",
 		Long:    `You can add an item to the items collection of the given secret`,
 		Example: "cryptex add-item 'my-new-item' --secret first-secret --box test-box",
 		Run: func(cmd *cobra.Command, args []string) {
-			err := addItem(args[0])
+			err := addItem(args[0], cmd)
 			if err != nil {
 				output.Error("", fmt.Sprintf("an error occurred during the item add: %s", err))
 			}
@@ -34,13 +34,11 @@ func newAddItemCmd() *cobra.Command {
 	// Here you will define your flags and configuration settings.
 	c.PersistentFlags().StringVarP(&boxName, "box", "b", "", "The name of the box")
 	c.Flags().StringVarP(&secretName, "secret", "s", "", "The name of the secret where to add the item")
-	c.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "to get more information use the verbose mode")
-
 	c.MarkFlagRequired("secret")
 	return c
 }
 
-func addItem(name string) error {
+func addItem(name string, cmd *cobra.Command) error {
 	found := false
 	// open the box
 	boxPath, key, box, err := utils.OpenBox(boxName)
@@ -74,7 +72,8 @@ func addItem(name string) error {
 			}
 			fmt.Println()
 			utils.Success(output.BoldS("new item saved!"))
-			if verbose {
+			v, _ := (*cmd).Parent().Flags().GetBool("verbose")
+			if v {
 				fmt.Println()
 				output.InfoBox(fmt.Sprintf("item added to %q into the box %s\n", secretName, output.BlueS(boxPath)))
 			}
