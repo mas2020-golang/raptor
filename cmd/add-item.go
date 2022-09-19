@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/mas2020-golang/goutils/output"
@@ -56,6 +57,10 @@ func addItem(name string) error {
 			}
 
 			// add the new item
+			fmt.Println(output.GreenS(strings.Repeat("-", 35)))
+			if s.Others == nil {
+				s.Others = make(map[string]string)
+			}
 			pwd, err := utils.AskForPassword("Item password: ", true, 1)
 			if err != nil {
 				return err
@@ -76,7 +81,7 @@ func addItem(name string) error {
 		}
 	}
 	if !found {
-		return fmt.Errorf("no secret %q found for the box %q", secretName, output.BlueS(boxPath))
+		return fmt.Errorf("no secret %q found for the box %q", secretName, boxPath)
 	}
 
 	return nil
