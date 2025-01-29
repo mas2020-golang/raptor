@@ -7,9 +7,7 @@ package print
 import (
 	"fmt"
 	"strings"
-	"time"
 
-	"github.com/mas2020-golang/cryptex/packages/protos"
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
@@ -50,7 +48,7 @@ func print(name string, cmd *cobra.Command) {
 }
 
 // getSecret searches the secret into the box.
-func getSecret(name string, box *protos.Box) (*protos.Secret, error) {
+func getSecret(name string, box *utils.Box) (*utils.Secret, error) {
 	if len(box.Secrets) == 0 {
 		return nil, fmt.Errorf("no secret found in the box")
 	}
@@ -62,13 +60,13 @@ func getSecret(name string, box *protos.Box) (*protos.Secret, error) {
 	return nil, fmt.Errorf("no secret found in the box")
 }
 
-func showToStdOut(s *protos.Secret, unsecure bool, cmd *cobra.Command, boxPath string) error {
-	// load the local timezone
-	loc, err := time.LoadLocation("Local")
-	if err != nil {
-		return err
-	}
-	lastUpdated := s.LastUpdated.AsTime().In(loc).Format("Jan 2 15:04 2006 MST")
+func showToStdOut(s *utils.Secret, unsecure bool, cmd *cobra.Command, boxPath string) error {
+	// // load the local timezone
+	// loc, err := time.LoadLocation("Local")
+	// if err != nil {
+	// 	return err
+	// }
+	lastUpdated := s.LastUpdated
 	fmt.Println(output.GreenS(strings.Repeat("-", 35)))
 	fmt.Printf("%s %s\n", output.BlueS("Version:"), s.Version)
 	fmt.Printf("%s %s\n", output.BlueS("Login:"), s.Login)
