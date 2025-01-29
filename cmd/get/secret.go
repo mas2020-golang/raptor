@@ -10,7 +10,6 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/mas2020-golang/cryptex/packages/protos"
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
@@ -57,7 +56,7 @@ func get(name string) {
 
 // searchSecretPwd searches for the secret and the value:
 // e.g. foo, foo.test
-func searchSecretPwd(name string, box *protos.Box) (value string, err error) {
+func searchSecretPwd(name string, box *utils.Box) (value string, err error) {
 	var (
 		secretName, secretItem string
 	)
