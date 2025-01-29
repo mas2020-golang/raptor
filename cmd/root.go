@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -42,6 +41,7 @@ func init() {
 	rootCmd.AddCommand(newEditCmd())
 	rootCmd.AddCommand(newGetCmd())
 	rootCmd.AddCommand(newPrintCmd())
+	rootCmd.AddCommand(OpenBoxCmd)
 
 	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
