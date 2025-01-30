@@ -23,13 +23,17 @@ func newOpenCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:     "open <BOX-NAME>",
 		Aliases: []string{"op", "open"},
-		Args:    cobra.MinimumNArgs(1),
+		// Args:    cobra.MinimumNArgs(1),
 		Short:   "Open a box",
 		Long:    `xxx xxx xxx`,
 		Example: `$ raptor open 'test'`,
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Printf("args: %v\n", args)
-			if err := interactiveOpen(args[0]); err != nil {
+			boxName := ""
+			if len(args) != 0 {
+				boxName = args[0]
+			}
+
+			if err := interactiveOpen(boxName); err != nil {
 				output.Error("", err.Error())
 				os.Exit(1)
 			}
