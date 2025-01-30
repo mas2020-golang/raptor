@@ -16,8 +16,8 @@ var (
 func newGetCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:   "get",
-		Short: "Get an object from cryptex",
-		Long: `Get an object to cryptex: you can get a box, a secret or an item
+		Short: "Get an object from raptor",
+		Long: `Get an object to raptor: you can get a box, a secret or an item
 of an existing secret as well`,
 	}
 	// Here you will define your flags and configuration settings.

@@ -1,7 +1,7 @@
 export GIT_COMMIT=$(shell git rev-list -1 --abbrev-commit HEAD)
 
 testing:
-	@echo "==> cryptex test..."
+	@echo "==> raptor test..."
 	@go test ./... -v
 
 goreleaser:
@@ -12,7 +12,7 @@ goreleaser:
 install-on-mac: build testing
 	@echo "start install..."
 	@echo "copying into $(GOPATH)/bin..."
-	@cp bin/cryptex-darwin-amd64 $(GOPATH)/bin/cryptex
+	@cp bin/raptor-darwin-amd64 $(GOPATH)/bin/raptor
 	@echo "done!"
 
 run:
@@ -22,9 +22,9 @@ run:
 build:
 	# compile Go-AL for several platform
 	@echo "compiling for every OS and Platform..."
-	GOOS=darwin GOARCH=amd64 go build -ldflags "-X main.GitCommit=${GIT_COMMIT}" -o bin/cryptex-darwin-amd64 main.go
-	GOOS=linux GOARCH=amd64 go build -ldflags "-X main.GitCommit=${GIT_COMMIT}" -o bin/cryptex-linux-amd64 main.go
-	GOOS=windows GOARCH=amd64 go build -ldflags "-X main.GitCommit=${GIT_COMMIT}" -o bin/cryptex-windows-amd64.exe main.go
+	GOOS=darwin GOARCH=amd64 go build -ldflags "-X main.GitCommit=${GIT_COMMIT}" -o bin/raptor-darwin-amd64 main.go
+	GOOS=linux GOARCH=amd64 go build -ldflags "-X main.GitCommit=${GIT_COMMIT}" -o bin/raptor-linux-amd64 main.go
+	GOOS=windows GOARCH=amd64 go build -ldflags "-X main.GitCommit=${GIT_COMMIT}" -o bin/raptor-windows-amd64.exe main.go
 	@echo "done!"
 
 clean:

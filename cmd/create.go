@@ -12,8 +12,8 @@ import (
 func newCreateCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:   "create",
-		Short: "Add an object to cryptex",
-		Long: `Add an object to cryptex: you can create a box, a secret or add an item
+		Short: "Add an object to raptor",
+		Long: `Add an object to raptor: you can create a box, a secret or add an item
 to an existing secret as well`,
 	}
 	// Here you will define your flags and configuration settings.

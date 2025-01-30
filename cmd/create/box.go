@@ -27,9 +27,9 @@ var AddBoxCmd = &cobra.Command{
 	Aliases: []string{"bo", "box"},
 	Args:    cobra.MinimumNArgs(1),
 	Short:   "Create a new box",
-	Long: `Create a new box and the .cryptex folder structure in case
+	Long: `Create a new box and the .raptor folder structure in case
 it doesn't exist yet`,
-	Example: `$ cryptex create box 'test' --owner me`,
+	Example: `$ raptor create box 'test' --owner me`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := create(args); err != nil {
 			output.Error("", err.Error())

@@ -24,8 +24,8 @@ var ListSecretCmd = &cobra.Command{
 	Short:   "List secret",
 	Long: `List all the secret in the --box given flag. Use the flag --name
 to filter using a regular expression.`,
-	Example: `$ cryptex secret ls --box test
-$ cryptex secret ls --box test --name '^secret.*test$`,
+	Example: `$ raptor secret ls --box test
+$ raptor secret ls --box test --name '^secret.*test$`,
 	Run: func(cmd *cobra.Command, args []string) {
 		listSecrets(cmd)
 	},

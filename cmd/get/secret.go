@@ -26,8 +26,8 @@ var GetSecretCmd = &cobra.Command{
 	Long: `Get the sensitive info from a secret. You can refer to the data as:
 - <SECRET_NAME>: retrieves the root pwd for the secret
 - <SECRET_NAME>.<ITEM_NAME>: retrieves the ITEM_NAME in the items collection`,
-	Example: `$ cryptex get secret foo --box test // to retrieve the pwd of the foo secret
-$ cryptex get secret foo.test --box test // to retrieve the test secret item of the foo secret`,
+	Example: `$ raptor get secret foo --box test // to retrieve the pwd of the foo secret
+$ raptor get secret foo.test --box test // to retrieve the test secret item of the foo secret`,
 	Run: func(cmd *cobra.Command, args []string) {
 		get(args[0])
 	},

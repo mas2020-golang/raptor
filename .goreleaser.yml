@@ -3,9 +3,9 @@ before:
     - go mod download
 builds:
   - main: ./main.go
-    binary: cryptex
+    binary: raptor
     env:
-      - CGO_ENABLED=0
+      - CGO_ENABLED=1
     ldflags:
       - -X main.GitCommit={{.ShortCommit}}
     goos:
@@ -39,8 +39,8 @@ changelog:
 brews:
   - tap:
       owner: mas2020-golang
-      name: homebrew-cryptex
+      name: homebrew-raptor
     folder: Formula
-    homepage: https://github.com/mas2020-golang/cryptex
+    homepage: https://github.com/mas2020-golang/raptor
     description: >
       Secure your secrets with a powerful and easy to use CLI application
