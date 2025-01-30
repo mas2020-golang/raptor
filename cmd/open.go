@@ -24,8 +24,8 @@ func newOpenCmd() *cobra.Command {
 		Use:     "open <BOX-NAME>",
 		Aliases: []string{"op", "open"},
 		// Args:    cobra.MinimumNArgs(1),
-		Short:   "Open a box",
-		Long:    `xxx xxx xxx`,
+		Short:   "Open a box in interactive mode",
+		Long:    ``,
 		Example: `$ raptor open 'test'`,
 		Run: func(cmd *cobra.Command, args []string) {
 			boxName := ""

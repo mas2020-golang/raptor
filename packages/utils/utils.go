@@ -18,6 +18,7 @@ import (
 var (
 	Version, GitCommit string
 	BufferBox          *Box
+	BoxPath, BoxPwd    string
 )
 
 func init() {
@@ -166,9 +167,8 @@ func GetFolderBox() (string, error) {
 func OpenBox(boxName, pwd string) (string, string, *Box, error) {
 	// if the box is in the buffer you can get into it
 	if BufferBox != nil {
-		return "", "", BufferBox, nil
+		return BoxPath, BoxPwd, BufferBox, nil
 	}
-	var boxPath string
 	// search the CRYPTEX_BOX env if name is empty
 	if len(boxName) == 0 {
 		boxName = os.Getenv("CRYPTEX_BOX")
@@ -183,10 +183,10 @@ func OpenBox(boxName, pwd string) (string, string, *Box, error) {
 	}
 
 	// read the box
-	boxPath = path.Join(boxFolder, boxName)
-	in, err := ioutil.ReadFile(boxPath)
+	BoxPath = path.Join(boxFolder, boxName)
+	in, err := ioutil.ReadFile(BoxPath)
 	if err != nil {
-		return "", "", nil, fmt.Errorf("reading the file box in %s: %v", boxPath, err)
+		return "", "", nil, fmt.Errorf("reading the file box in %s: %v", BoxPath, err)
 	}
 
 	if len(pwd) == 0 {
@@ -200,7 +200,7 @@ func OpenBox(boxName, pwd string) (string, string, *Box, error) {
 	// encrypt the box
 	decIn, err := security.DecryptBox(in, pwd)
 	if err != nil {
-		return "", "", nil, fmt.Errorf("decrypting the file box in %s: %v", boxPath, err)
+		return "", "", nil, fmt.Errorf("decrypting the file box in %s: %v", BoxPath, err)
 	}
 
 	box := &Box{}
@@ -208,7 +208,8 @@ func OpenBox(boxName, pwd string) (string, string, *Box, error) {
 	if err != nil {
 		return "", "", nil, fmt.Errorf("failed to read the box: %v. Maybe an incorrect pwd?", err)
 	}
-	return boxPath, pwd, box, nil
+	BoxPwd = pwd
+	return BoxPath, pwd, box, nil
 }
 
 func SaveBox(path, key string, box *Box) error {

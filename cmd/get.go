@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -16,7 +15,7 @@ var (
 func newGetCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:   "get",
-		Short: "Get an object from raptor",
+		Short: "Get an object from raptor (*available in interactive mode only)",
 		Long: `Get an object to raptor: you can get a box, a secret or an item
 of an existing secret as well`,
 	}

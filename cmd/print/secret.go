@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package print
 
@@ -79,7 +78,6 @@ func showToStdOut(s *utils.Secret, unsecure *bool, cmd *cobra.Command, boxPath s
 	fmt.Printf("%s\n%s\n", output.BlueS("\nNotes:"), s.Notes)
 	fmt.Println(output.BlueS(strings.Repeat("-", 35)))
 	if len(s.Others) > 0 {
-		fmt.Printf("unsecure value: %v", unsecure)
 		output.Bold("Items:\n")
 		for k, v := range s.Others {
 			if *unsecure {

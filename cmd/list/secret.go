@@ -57,6 +57,7 @@ func listSecrets(cmd *cobra.Command) {
 		if len(s.Version) > 9 {
 			version = s.Version[0:6] + "..."
 		}
+		url = s.Url
 		if len(s.Url) > 44 {
 			url = s.Url[0:42] + "..."
 		}

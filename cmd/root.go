@@ -13,17 +13,19 @@ var verbose bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "cryptex",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Use:   "raptor <command> [flags]",
+	Short: "Use raptor to keep safe your personal information",
+	Long: `Raptor is a Go-based application designed to securely store your personal information within an encrypted "box."
+By leveraging robust encryption techniques, SecureBox ensures that your sensitive data remains confidential and accessible
+only to you.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+Features:
+    - Strong Encryption: Utilizes AES (Advanced Encryption Standard) for encrypting your data, ensuring high levels of security.
+    slingacademy.com
+
+    - Password Protection: Access your encrypted box using a password, providing an additional layer of security.
+
+    - Data Integrity: Ensures that your personal information remains intact and unaltered during storage and retrieval.`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

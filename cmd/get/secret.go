@@ -22,7 +22,7 @@ var GetSecretCmd = &cobra.Command{
 	Use:     "secret <NAME>",
 	Args:    cobra.MinimumNArgs(1),
 	Aliases: []string{"sr"},
-	Short:   "Get the sensitive info from a secret",
+	Short:   "Get the sensitive info from a secret (*available in interactive mode only)",
 	Long: `Get the sensitive info from a secret. You can refer to the data as:
 - <SECRET_NAME>: retrieves the root pwd for the secret
 - <SECRET_NAME>.<ITEM_NAME>: retrieves the ITEM_NAME in the items collection`,
@@ -53,8 +53,8 @@ func get(name string) {
 	if err != nil {
 		panic(err)
 	}
-    // Write text to the clipboard
-    clipboard.Write(clipboard.FmtText, []byte(s))
+	// Write text to the clipboard
+	clipboard.Write(clipboard.FmtText, []byte(s))
 	// err = execCmd(s)
 	// utils.Check(err, "")
 	fmt.Println()
