@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package get
 
@@ -13,6 +12,7 @@ import (
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
+	"golang.design/x/clipboard"
 )
 
 var boxName string
@@ -39,7 +39,7 @@ func init() {
 
 func get(name string) {
 	// open the box
-	_, _, box, err := utils.OpenBox(boxName)
+	_, _, box, err := utils.OpenBox(boxName, "")
 	utils.Check(err, "")
 	s, err := searchSecretPwd(name, box)
 	utils.Check(err, "")
@@ -48,8 +48,15 @@ func get(name string) {
 		return
 	}
 	// copy the secret into the clipboard
-	err = execCmd(s)
-	utils.Check(err, "")
+	// Initialize the clipboard
+	err = clipboard.Init()
+	if err != nil {
+		panic(err)
+	}
+    // Write text to the clipboard
+    clipboard.Write(clipboard.FmtText, []byte(s))
+	// err = execCmd(s)
+	// utils.Check(err, "")
 	fmt.Println()
 	utils.Success(output.BoldS("the secret is in your clipboard"))
 }
@@ -65,10 +72,12 @@ func searchSecretPwd(name string, box *utils.Box) (value string, err error) {
 	if len(elems) > 1 {
 		secretItem = elems[1]
 	}
-
 	if box.Secrets != nil {
 		for _, s := range box.Secrets {
+			// fmt.Printf("secret in the box: %s\n", s.Name)
+			// fmt.Printf("secret name given: %s\n", secretName)
 			if secretName == s.Name {
+				// fmt.Printf("found the secret name %s\n", secretName)
 				if len(secretItem) > 0 {
 					if len(s.Others) > 0 {
 						for k, v := range s.Others {
@@ -87,8 +96,8 @@ func searchSecretPwd(name string, box *utils.Box) (value string, err error) {
 }
 
 // execCmd the command passing arg as the standard input. The command that will be executed is:
-//  - pbcopy: for Mac and Linux
-//  - clip: for Windows
+//   - pbcopy: for Mac and Linux
+//   - clip: for Windows
 func execCmd(arg string) error {
 	cmdName := "pbcopy"
 	os := runtime.GOOS

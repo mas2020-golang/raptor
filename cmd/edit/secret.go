@@ -39,7 +39,7 @@ func init() {
 
 func edit(name string) {
 	// open the box
-	boxPath, key, box, err := utils.OpenBox(boxName)
+	boxPath, key, box, err := utils.OpenBox(boxName, "")
 	utils.Check(err, "")
 	// add the secret
 	err = editSecret(name, box, boxPath)

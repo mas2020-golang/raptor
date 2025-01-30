@@ -21,7 +21,7 @@ var (
 // boxCmd represents the box command
 var PrintSecretCmd = &cobra.Command{
 	Use:     "secret <NAME>",
-	Aliases: []string{"sr"},
+	Aliases: []string{"sr", "s"},
 	Args:    cobra.MinimumNArgs(1),
 	Short:   "Print the info of a secret",
 	Long: `Print all the info related to the secret. If you specify --unsecure flag you will get also the sensitive
@@ -39,11 +39,11 @@ func init() {
 
 func print(name string, cmd *cobra.Command) {
 	// open the box
-	boxPath, _, box, err := utils.OpenBox(boxName)
+	boxPath, _, box, err := utils.OpenBox(boxName, "")
 	utils.Check(err, "")
 	s, err := getSecret(name, box)
 	utils.Check(err, "")
-	err = showToStdOut(s, unsecure, cmd, boxPath)
+	err = showToStdOut(s, &unsecure, cmd, boxPath)
 	utils.Check(err, "")
 }
 
@@ -60,7 +60,7 @@ func getSecret(name string, box *utils.Box) (*utils.Secret, error) {
 	return nil, fmt.Errorf("no secret found in the box")
 }
 
-func showToStdOut(s *utils.Secret, unsecure bool, cmd *cobra.Command, boxPath string) error {
+func showToStdOut(s *utils.Secret, unsecure *bool, cmd *cobra.Command, boxPath string) error {
 	// // load the local timezone
 	// loc, err := time.LoadLocation("Local")
 	// if err != nil {
@@ -70,18 +70,19 @@ func showToStdOut(s *utils.Secret, unsecure bool, cmd *cobra.Command, boxPath st
 	fmt.Println(output.GreenS(strings.Repeat("-", 35)))
 	fmt.Printf("%s %s\n", output.BlueS("Version:"), s.Version)
 	fmt.Printf("%s %s\n", output.BlueS("Login:"), s.Login)
-	if unsecure {
+	if *unsecure {
 		fmt.Printf("%s %s\n", output.BlueS("Pwd:"), s.Pwd)
 	} else {
-		fmt.Printf("%s %s\n", output.BlueS("Pwd:"), "xxx")
+		fmt.Printf("%s %s\n", output.BlueS("Pwd:"), "---------")
 	}
 	fmt.Printf("%s %s\n", output.BlueS("Url:"), s.Url)
 	fmt.Printf("%s\n%s\n", output.BlueS("\nNotes:"), s.Notes)
 	fmt.Println(output.BlueS(strings.Repeat("-", 35)))
-	if s.Others != nil && len(s.Others) > 0 {
+	if len(s.Others) > 0 {
+		fmt.Printf("unsecure value: %v", unsecure)
 		output.Bold("Items:\n")
 		for k, v := range s.Others {
-			if unsecure {
+			if *unsecure {
 				fmt.Printf("%-2s.%s -> %s\n", "", output.BlueS(k), v)
 			} else {
 				fmt.Printf("%-2s.%s\n", "", output.BlueS(k))
@@ -95,5 +96,7 @@ func showToStdOut(s *utils.Secret, unsecure bool, cmd *cobra.Command, boxPath st
 		output.InfoBox(fmt.Sprintf("secret read from the %s box\n", output.BlueS(boxPath)))
 	}
 
+	// for interactive mode only
+	*unsecure = false
 	return nil
 }
