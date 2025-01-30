@@ -7,9 +7,6 @@ package list
 import (
 	"fmt"
 	"regexp"
-	"time"
-
-	"github.com/mas2020-golang/cryptex/packages/protos"
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
@@ -42,8 +39,8 @@ func init() {
 
 func listSecrets(cmd *cobra.Command) {
 	// load the local timezone
-	loc, err := time.LoadLocation("Local")
-	utils.Check(err, "")
+	// loc, err := time.LoadLocation("Local")
+	// utils.Check(err, "")
 	// open the box
 	boxPath, _, box, err := utils.OpenBox(boxName)
 	utils.Check(err, "")
@@ -68,7 +65,7 @@ func listSecrets(cmd *cobra.Command) {
 		}
 		nameFormatS := fmt.Sprintf("%s%ds", "%-", maxName+2)
 		s.Name = output.RedS(output.BoldS(fmt.Sprintf(nameFormatS, s.Name)))
-		lastUpdated := s.LastUpdated.AsTime().In(loc).Format("Jan 2 15:04 2006 MST")
+		lastUpdated := s.LastUpdated
 		// check the name flag
 		if len(filter) > 0 {
 			r, _ := regexp.Compile(filter)
@@ -90,7 +87,7 @@ func listSecrets(cmd *cobra.Command) {
 	}
 }
 
-func showItems(s *protos.Secret) {
+func showItems(s *utils.Secret) {
 	if !items {
 		return
 	}
@@ -103,7 +100,7 @@ func showItems(s *protos.Secret) {
 }
 
 // getMaxNameLenght return the max lenght for the NAME attribute
-func getMaxNameLenght(box *protos.Box) int {
+func getMaxNameLenght(box *utils.Box) int {
 	max := 10
 	for _, s := range box.Secrets {
 		if len(s.Name) > max {
@@ -114,7 +111,7 @@ func getMaxNameLenght(box *protos.Box) int {
 }
 
 // getMaxLoginLenght return the max lenght for the LOGIN attribute
-func getMaxLoginLenght(box *protos.Box) int {
+func getMaxLoginLenght(box *utils.Box) int {
 	max := 10
 	for _, s := range box.Secrets {
 		if len(s.Login) > max {

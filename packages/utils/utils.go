@@ -9,12 +9,12 @@ import (
 	"path"
 	"strings"
 
-	"github.com/mas2020-golang/cryptex/packages/protos"
 	"github.com/mas2020-golang/cryptex/packages/security"
 	"github.com/mas2020-golang/goutils/output"
 	"golang.org/x/term"
-	"google.golang.org/protobuf/proto"
+	"gopkg.in/yaml.v2"
 )
+
 
 var (
 	Version, GitCommit string
@@ -22,6 +22,26 @@ var (
 
 func init() {
 	Version = "0.2.0-dev"
+}
+
+type Secret struct {
+	Name        string                 `yaml:"name,omitempty"`
+	Id          int32                  `yaml:"id,omitempty"` // Unique ID number for this secret
+	Pwd         string                 `yaml:"pwd,omitempty"`
+	Url         string                 `yaml:"url,omitempty"`
+	Notes       string                 `yaml:"notes,omitempty"`
+	Others      map[string]string      `yaml:"others,omitempty"`
+	Version     string                 `yaml:"version,omitempty"`
+	Login       string                 `yaml:"login,omitempty"`
+	LastUpdated string `yaml:"lastUpdated,omitempty"`
+}
+
+type Box struct {
+	Name        string    `yaml:"name,omitempty"`
+	Version     string    `yaml:"version,omitempty"`
+	LastUpdated string    `yaml:"lastUpdated,omitempty"`
+	Owner       string    `yaml:"owner,omitempty"`
+	Secrets     []*Secret `yaml:"secrets,omitempty"`
 }
 
 // GetBytesFromPipe reads from the pipe and return the buffer of bytes of the given argument
@@ -143,7 +163,7 @@ func GetFolderBox() (string, error) {
 }
 
 // OpenBox opens a box
-func OpenBox(boxName string) (string, string, *protos.Box, error) {
+func OpenBox(boxName string) (string, string, *Box, error) {
 	var boxPath string
 	// search the CRYPTEX_BOX env if name is empty
 	if len(boxName) == 0 {
@@ -176,16 +196,16 @@ func OpenBox(boxName string) (string, string, *protos.Box, error) {
 		return "", "", nil, fmt.Errorf("decrypting the file box in %s: %v", boxPath, err)
 	}
 
-	box := &protos.Box{}
-	err = proto.Unmarshal(decIn, box)
+	box := &Box{}
+	err = yaml.Unmarshal(decIn, box)
 	if err != nil {
 		return "", "", nil, fmt.Errorf("failed to read the box: %v. Maybe an incorrect pwd?", err)
 	}
 	return boxPath, key, box, nil
 }
 
-func SaveBox(path, key string, box *protos.Box) error {
-	out, err := proto.Marshal(box)
+func SaveBox(path, key string, box *Box) error {
+	out, err := yaml.Marshal(box)
 	if err != nil {
 		return fmt.Errorf("failed to encode the box: %v", err)
 	}

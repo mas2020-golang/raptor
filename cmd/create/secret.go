@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package create
 
@@ -9,12 +8,11 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
-	"github.com/mas2020-golang/cryptex/packages/protos"
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 var key, boxName string
@@ -50,7 +48,7 @@ func add(name string) {
 	utils.Success(output.BoldS("box saved!"))
 }
 
-func addSecret(name string, box *protos.Box) error {
+func addSecret(name string, box *utils.Box) error {
 	if err := search(name, box); err != nil {
 		return err
 	}
@@ -58,10 +56,10 @@ func addSecret(name string, box *protos.Box) error {
 	output.RedOut("(to exit without saving press CTRL+C)\n")
 	fmt.Println(output.GreenS(strings.Repeat("-", 35)))
 	if box.Secrets == nil {
-		box.Secrets = make([]*protos.Secret, 0)
+		box.Secrets = make([]*utils.Secret, 0)
 	}
 	// new secret
-	s := protos.Secret{}
+	s := utils.Secret{}
 	s.Name = name
 	// read from standard input
 	r := bufio.NewReader(os.Stdin)
@@ -109,14 +107,14 @@ func addSecret(name string, box *protos.Box) error {
 			}
 		}
 	}
-	s.LastUpdated = timestamppb.Now()
+	s.LastUpdated = time.Now().Format(time.RFC3339)
 	box.Secrets = append(box.Secrets, &s)
 	return nil
 }
 
 // search goes into the secret and throws an error if a secret with the same
 // name already exists
-func search(name string, box *protos.Box) error {
+func search(name string, box *utils.Box) error {
 	for _, s := range box.Secrets {
 		if (*s).Name == name {
 			return fmt.Errorf("a secret with the name %s already exists", name)

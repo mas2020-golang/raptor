@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package create
 
@@ -9,14 +8,13 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"time"
 
-	"github.com/mas2020-golang/cryptex/packages/protos"
 	"github.com/mas2020-golang/cryptex/packages/security"
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
-	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/types/known/timestamppb"
+	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -31,7 +29,7 @@ var AddBoxCmd = &cobra.Command{
 	Short:   "Create a new box",
 	Long: `Create a new box and the .cryptex folder structure in case
 it doesn't exist yet`,
-	Example: `$ cryptex box create 'test' --owner me`,
+	Example: `$ cryptex create box 'test' --owner me`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := create(args); err != nil {
 			output.Error("", err.Error())
@@ -43,6 +41,7 @@ it doesn't exist yet`,
 func init() {
 	AddBoxCmd.Flags().StringVarP(&owner, "owner", "o", "", "The owner of the box (e.g. --owner bar)")
 }
+
 
 func create(args []string) error {
 	var err error
@@ -69,6 +68,7 @@ func createHomeFolder() error {
 	return err
 }
 
+// TODO: refactor the box creation using the YAML box (look at the `YAML info.md` file)
 func createBox(name, owner string) error {
 	// get the folder box
 	boxPath, err := utils.GetFolderBox()
@@ -76,11 +76,11 @@ func createBox(name, owner string) error {
 		return fmt.Errorf("problem to determine the folder box: %v", err)
 	}
 
-	b := protos.Box{
+	b := utils.Box{
 		Name:        name,
 		Owner:       owner,
 		Version:     "1",
-		LastUpdated: timestamppb.Now(),
+		LastUpdated: time.Now().Format(time.RFC3339),
 	}
 
 	// check if the box already exists
@@ -89,10 +89,12 @@ func createBox(name, owner string) error {
 		return fmt.Errorf("problem to determine the folder box: %v", err)
 	}
 
-	out, err := proto.Marshal(&b)
+	out, err := yaml.Marshal(b)
 	if err != nil {
 		return fmt.Errorf("failed to encode the box: %v", err)
 	}
+	fmt.Printf("box creation YAML details:\n%s", string(out)) //TODO: remove this line
+
 	// ask for the password
 	key, err := utils.AskForPassword("Password: ", true)
 	if err != nil {

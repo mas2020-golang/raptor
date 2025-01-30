@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package edit
 
@@ -9,12 +8,11 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
-	"github.com/mas2020-golang/cryptex/packages/protos"
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // boxCmd represents the box command
@@ -53,7 +51,7 @@ func edit(name string) {
 	utils.Success(output.BoldS("box saved!"))
 }
 
-func editSecret(name string, box *protos.Box, boxPath string) error {
+func editSecret(name string, box *utils.Box, boxPath string) error {
 	// get the secret to edit
 	s := findSecret(name, box)
 	if s == nil {
@@ -122,13 +120,13 @@ func editSecret(name string, box *protos.Box, boxPath string) error {
 		}
 	}
 
-	s.LastUpdated = timestamppb.Now()
+	s.LastUpdated = time.Now().Format(time.RFC3339)
 	return nil
 }
 
 // findSecret searches for the secret into the box and returns the one corresponding or nil
 // value
-func findSecret(name string, box *protos.Box) *protos.Secret {
+func findSecret(name string, box *utils.Box) *utils.Secret {
 	for _, s := range box.Secrets {
 		if (*s).Name == name {
 			return s
