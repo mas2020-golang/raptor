@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.0-rc.1](https://github.com/mas2020-golang/cryptex/releases/tag/v0.1.0-rc.1) - 2022-05-14
+## [0.1.0-rc.1](https://github.com/mas2020-golang/raptor/releases/tag/v0.1.0-rc.1) - 2022-05-14
 
 ### Added
 - Add the 'box create' command

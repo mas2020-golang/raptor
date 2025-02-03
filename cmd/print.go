@@ -15,7 +15,7 @@ func newPrintCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:     "print",
 		Aliases: []string{"pr"},
-		Short:   "Print a cryptex object",
+		Short:   "Print a raptor object",
 		Long:    `You can easily print the details of box or a secret`,
 	}
 

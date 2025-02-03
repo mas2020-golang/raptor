@@ -14,8 +14,8 @@ var (
 	ListCmd = &cobra.Command{
 		Use:     "ls",
 		Aliases: []string{"list"},
-		Short:   "Show the specified cryptex objects",
-		Long:    `Show the specified cryptex objects: boxes, secrets, items`,
+		Short:   "Show the specified raptor objects",
+		Long:    `Show the specified raptor objects: boxes, secrets, items`,
 	}
 	filter string
 )
@@ -24,8 +24,8 @@ func newListCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:     "ls",
 		Aliases: []string{"list"},
-		Short:   "Show the specified cryptex objects",
-		Long:    `Show the specified cryptex objects: boxes, secrets, items`,
+		Short:   "Show the specified raptor objects",
+		Long:    `Show the specified raptor objects: boxes, secrets, items`,
 	}
 	// Here you will define your flags and configuration settings.
 	c.AddCommand(list.ListBoxCmd)
