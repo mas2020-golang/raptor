@@ -15,9 +15,10 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-
 var (
 	Version, GitCommit string
+	BufferBox          *Box
+	BoxPath, BoxPwd    string
 )
 
 func init() {
@@ -25,15 +26,15 @@ func init() {
 }
 
 type Secret struct {
-	Name        string                 `yaml:"name,omitempty"`
-	Id          int32                  `yaml:"id,omitempty"` // Unique ID number for this secret
-	Pwd         string                 `yaml:"pwd,omitempty"`
-	Url         string                 `yaml:"url,omitempty"`
-	Notes       string                 `yaml:"notes,omitempty"`
-	Others      map[string]string      `yaml:"others,omitempty"`
-	Version     string                 `yaml:"version,omitempty"`
-	Login       string                 `yaml:"login,omitempty"`
-	LastUpdated string `yaml:"lastUpdated,omitempty"`
+	Name        string            `yaml:"name,omitempty"`
+	Id          int32             `yaml:"id,omitempty"` // Unique ID number for this secret
+	Pwd         string            `yaml:"pwd,omitempty"`
+	Url         string            `yaml:"url,omitempty"`
+	Notes       string            `yaml:"notes,omitempty"`
+	Others      map[string]string `yaml:"others,omitempty"`
+	Version     string            `yaml:"version,omitempty"`
+	Login       string            `yaml:"login,omitempty"`
+	LastUpdated string            `yaml:"lastUpdated,omitempty"`
 }
 
 type Box struct {
@@ -163,8 +164,11 @@ func GetFolderBox() (string, error) {
 }
 
 // OpenBox opens a box
-func OpenBox(boxName string) (string, string, *Box, error) {
-	var boxPath string
+func OpenBox(boxName, pwd string) (string, string, *Box, error) {
+	// if the box is in the buffer you can get into it
+	if BufferBox != nil {
+		return BoxPath, BoxPwd, BufferBox, nil
+	}
 	// search the CRYPTEX_BOX env if name is empty
 	if len(boxName) == 0 {
 		boxName = os.Getenv("CRYPTEX_BOX")
@@ -179,21 +183,24 @@ func OpenBox(boxName string) (string, string, *Box, error) {
 	}
 
 	// read the box
-	boxPath = path.Join(boxFolder, boxName)
-	in, err := ioutil.ReadFile(boxPath)
+	BoxPath = path.Join(boxFolder, boxName)
+	in, err := ioutil.ReadFile(BoxPath)
 	if err != nil {
-		return "", "", nil, fmt.Errorf("reading the file box in %s: %v", boxPath, err)
+		return "", "", nil, fmt.Errorf("reading the file box in %s: %v", BoxPath, err)
 	}
 
-	// ask for the password
-	key, err := AskForPassword("Password: ", false)
-	if err != nil {
-		return "", "", nil, err
+	if len(pwd) == 0 {
+		// ask for the password
+		pwd, err = AskForPassword("Password: ", false)
+		if err != nil {
+			return "", "", nil, err
+		}
 	}
+
 	// encrypt the box
-	decIn, err := security.DecryptBox(in, key)
+	decIn, err := security.DecryptBox(in, pwd)
 	if err != nil {
-		return "", "", nil, fmt.Errorf("decrypting the file box in %s: %v", boxPath, err)
+		return "", "", nil, fmt.Errorf("decrypting the file box in %s: %v", BoxPath, err)
 	}
 
 	box := &Box{}
@@ -201,7 +208,8 @@ func OpenBox(boxName string) (string, string, *Box, error) {
 	if err != nil {
 		return "", "", nil, fmt.Errorf("failed to read the box: %v. Maybe an incorrect pwd?", err)
 	}
-	return boxPath, key, box, nil
+	BoxPwd = pwd
+	return BoxPath, pwd, box, nil
 }
 
 func SaveBox(path, key string, box *Box) error {

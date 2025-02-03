@@ -24,7 +24,7 @@ var AddSecretCmd = &cobra.Command{
 	Args:    cobra.MinimumNArgs(1),
 	Short:   "Create a new secret",
 	Long:    `Create a new secret adding the one to the existing secret for the box`,
-	Example: `$ cryptex secret add 'new-secret' --box test`,
+	Example: `$ raptor secret add 'new-secret' --box test`,
 	Run: func(cmd *cobra.Command, args []string) {
 		add(args[0])
 	},
@@ -36,7 +36,7 @@ func init() {
 
 func add(name string) {
 	// open the box
-	boxPath, key, box, err := utils.OpenBox(boxName)
+	boxPath, key, box, err := utils.OpenBox(boxName, "")
 	utils.Check(err, "")
 	// add the secret
 	err = addSecret(name, box)

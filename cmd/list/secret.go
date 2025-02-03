@@ -1,12 +1,12 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package list
 
 import (
 	"fmt"
 	"regexp"
+
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
@@ -24,8 +24,8 @@ var ListSecretCmd = &cobra.Command{
 	Short:   "List secret",
 	Long: `List all the secret in the --box given flag. Use the flag --name
 to filter using a regular expression.`,
-	Example: `$ cryptex secret ls --box test
-$ cryptex secret ls --box test --name '^secret.*test$`,
+	Example: `$ raptor secret ls --box test
+$ raptor secret ls --box test --name '^secret.*test$`,
 	Run: func(cmd *cobra.Command, args []string) {
 		listSecrets(cmd)
 	},
@@ -41,8 +41,9 @@ func listSecrets(cmd *cobra.Command) {
 	// load the local timezone
 	// loc, err := time.LoadLocation("Local")
 	// utils.Check(err, "")
-	// open the box
-	boxPath, _, box, err := utils.OpenBox(boxName)
+	// output variables
+	name, version, url, login := "", "", "", ""
+	boxPath, _, box, err := utils.OpenBox(boxName, "")
 	utils.Check(err, "")
 	// get the max length for the NAME, LOGIN attribute
 	maxName := getMaxNameLenght(box)
@@ -52,30 +53,31 @@ func listSecrets(cmd *cobra.Command) {
 	fmt.Printf(formatS, "NAME", "VERSION", "LOGIN", "URL", "ITEMS", "LAST-UPD")
 	for _, s := range box.Secrets {
 		loginFormatS := fmt.Sprintf("%s%ds", "%-", maxLogin+2)
-		s.Login = fmt.Sprintf(loginFormatS, s.Login)
+		login = fmt.Sprintf(loginFormatS, s.Login)
 		if len(s.Version) > 9 {
-			s.Version = s.Version[0:6] + "..."
+			version = s.Version[0:6] + "..."
 		}
+		url = s.Url
 		if len(s.Url) > 44 {
-			s.Url = s.Url[0:42] + "..."
+			url = s.Url[0:42] + "..."
 		}
-		s.Url = output.BlueS(fmt.Sprintf("%-47s", s.Url))
+		url = output.BlueS(fmt.Sprintf("%-47s", url))
 		if len(s.Notes) > 30 {
 			s.Notes = s.Notes[0:26] + "..."
 		}
 		nameFormatS := fmt.Sprintf("%s%ds", "%-", maxName+2)
-		s.Name = output.RedS(output.BoldS(fmt.Sprintf(nameFormatS, s.Name)))
+		name = output.RedS(output.BoldS(fmt.Sprintf(nameFormatS, s.Name)))
 		lastUpdated := s.LastUpdated
 		// check the name flag
 		if len(filter) > 0 {
 			r, _ := regexp.Compile(filter)
-			if r.MatchString(s.Name) {
-				fmt.Printf("%s%-9s%s%s%-11d%s\n", s.Name, s.Version, s.Login, s.Url, len(s.Others),
+			if r.MatchString(name) {
+				fmt.Printf("%s%-9s%s%s%-11d%s\n", name, version, login, url, len(s.Others),
 					lastUpdated)
 				showItems(s)
 			}
 		} else {
-			fmt.Printf("%s%-9s%s%s%-11d%s\n", s.Name, s.Version, s.Login, s.Url, len(s.Others),
+			fmt.Printf("%s%-9s%s%s%-11d%s\n", name, version, login, url, len(s.Others),
 				lastUpdated)
 			showItems(s)
 		}

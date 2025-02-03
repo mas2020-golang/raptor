@@ -8,7 +8,7 @@ export ALIAS_NAME="crptx"
 export OWNER=mas2020-golang
 export REPO=goal-modules
 export BINLOCATION="/usr/local/bin"
-export APP_NAME="cryptex" # the name of the untar application
+export APP_NAME="raptor" # the name of the untar application
 export SUCCESS_CMD="${BINLOCATION}/${APP_NAME} version"
 
 # -- COLORS

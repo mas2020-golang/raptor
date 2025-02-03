@@ -26,7 +26,7 @@ The <NAME> argument is in the following format:
   - 'secret name.pwd': to update only the pwd
   - 'secret name': to update every elements
 `,
-	Example: `$ cryptex secret edit 'new-secret' --box test`,
+	Example: `$ raptor secret edit 'new-secret' --box test`,
 	Run: func(cmd *cobra.Command, args []string) {
 		edit(args[0])
 	},
@@ -39,7 +39,7 @@ func init() {
 
 func edit(name string) {
 	// open the box
-	boxPath, key, box, err := utils.OpenBox(boxName)
+	boxPath, key, box, err := utils.OpenBox(boxName, "")
 	utils.Check(err, "")
 	// add the secret
 	err = editSecret(name, box, boxPath)

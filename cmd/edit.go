@@ -13,8 +13,8 @@ import (
 func newEditCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:   "edit",
-		Short: "Edit a cryptex object",
-		Long:  `Edit a cryptex object: secret`,
+		Short: "Edit a raptor object",
+		Long:  `Edit a raptor object: secret`,
 	}
 	// Here you will define your flags and configuration settings.
 	// Here you will define your flags and configuration settings.
