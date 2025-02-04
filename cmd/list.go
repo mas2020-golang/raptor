@@ -9,7 +9,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// TODO: move the command in the cmd package
 var (
 	ListCmd = &cobra.Command{
 		Use:     "ls",

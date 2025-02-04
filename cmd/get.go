@@ -8,10 +8,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	boxName string
-)
-
 func newGetCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:   "get",
