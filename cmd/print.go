@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -17,6 +16,10 @@ func newPrintCmd() *cobra.Command {
 		Aliases: []string{"pr"},
 		Short:   "Print a raptor object",
 		Long:    `You can easily print the details of box or a secret`,
+		PersistentPostRun: func(cmd *cobra.Command, args []string) {
+			// reset the status of the verbose mode after the print xxx run (needed for interactive mode only)
+			verbose = false
+		},
 	}
 
 	// Here you will define your flags and configuration settings.
