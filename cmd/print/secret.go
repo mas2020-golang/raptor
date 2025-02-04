@@ -40,31 +40,30 @@ func print(name string, cmd *cobra.Command) {
 	// open the box
 	boxPath, _, box, err := utils.OpenBox(boxName, "")
 	utils.Check(err, "")
+
+	// get the secret
 	s, err := getSecret(name, box)
-	utils.Check(err, "")
-	err = showToStdOut(s, &unsecure, cmd, boxPath)
-	utils.Check(err, "")
+	if err != nil {
+		output.Error("", err.Error())
+		return
+	}
+	showToStdOut(s, &unsecure, cmd, boxPath)
 }
 
 // getSecret searches the secret into the box.
 func getSecret(name string, box *utils.Box) (*utils.Secret, error) {
 	if len(box.Secrets) == 0 {
-		return nil, fmt.Errorf("no secret found in the box")
+		return nil, fmt.Errorf("no secret '%s' found in the box", name)
 	}
 	for _, secret := range box.Secrets {
 		if secret.Name == name {
 			return secret, nil
 		}
 	}
-	return nil, fmt.Errorf("no secret found in the box")
+	return nil, fmt.Errorf("no secret '%s' found in the box", name)
 }
 
-func showToStdOut(s *utils.Secret, unsecure *bool, cmd *cobra.Command, boxPath string) error {
-	// // load the local timezone
-	// loc, err := time.LoadLocation("Local")
-	// if err != nil {
-	// 	return err
-	// }
+func showToStdOut(s *utils.Secret, unsecure *bool, cmd *cobra.Command, boxPath string) {
 	lastUpdated := s.LastUpdated
 	fmt.Println(output.GreenS(strings.Repeat("-", 35)))
 	fmt.Printf("%s %s\n", output.BlueS("Version:"), s.Version)
@@ -96,5 +95,4 @@ func showToStdOut(s *utils.Secret, unsecure *bool, cmd *cobra.Command, boxPath s
 
 	// for interactive mode only
 	*unsecure = false
-	return nil
 }

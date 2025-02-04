@@ -101,12 +101,3 @@ func clearScreen() {
 	cmd.Stdout = os.Stdout
 	cmd.Run()
 }
-
-func showOutput() {
-	for i := 0; i < 10; i++ {
-		fmt.Println(`
-Box: NAME
-Last update: DATE`)
-	}
-	fmt.Println()
-}
