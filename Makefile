@@ -6,11 +6,13 @@ testing:
 
 goreleaser:
 	@echo "start building..."
-	@goreleaser  --rm-dist --snapshot --skip-publish
+	@clear
+	@goreleaser  release --snapshot --clean
 	@echo "done!"
 
-install-on-mac: build testing
+install-on-mac: testing
 	@echo "start installing..."
+	CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -ldflags "-X main.GitCommit=${GIT_COMMIT}" -o bin/raptor-darwin-amd64 main.go
 	@echo "copying into $(GOPATH)/bin..."
 	@cp bin/raptor-darwin-amd64 $(GOPATH)/bin/raptor
 	@echo "done!"
