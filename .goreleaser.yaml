@@ -14,28 +14,35 @@ before:
     - go mod tidy
 
 builds:
-  - goos:
+  - id: raptor_linux_amd64
+    goos:
       - linux
     goarch:
       - amd64
     env:
       - CGO_ENABLED=1
       - CC=x86_64-linux-gnu-gcc
-  - goos:
+      
+  - id: raptor_linux_arm64
+    goos:
       - linux
     goarch:
       - arm64
     env:
       - CGO_ENABLED=1
       - CC=aarch64-linux-gnu-gcc
-  - goos:
+
+  - id: raptor_darwin_amd64
+    goos:
       - darwin
     goarch:
       - amd64
     env:
       - CGO_ENABLED=1
       - CC=o64-clang
-  - goos:
+
+  - id: raptor_darwin_arm64
+    goos:
       - darwin
     goarch:
       - arm64
