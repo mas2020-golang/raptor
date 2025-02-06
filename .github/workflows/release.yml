@@ -24,11 +24,11 @@ jobs:
         name: Get dependencies
         run: |
           go get -t -x ./...
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y libx11-dev
       -
         name: Test
         run: make testing
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y libx11-dev
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
