@@ -24,8 +24,8 @@ jobs:
         name: Get dependencies
         run: |
           go get -t -x ./...
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y libx11-dev gcc-aarch64-linux-gnu
+      - name: Install dependencies for the clipboard go package
+        run: sudo apt-get update && sudo apt-get install -y libx11-dev
       -
         name: Test
         run: make testing
