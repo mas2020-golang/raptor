@@ -3,6 +3,10 @@ Raptor is a CLI application to manage and in a fast and smart way your secrets. 
 
 ## Installing raptor
 
+We tested `raptor` on Linux and Mac. To work on Linux you need to get installed one of the following software:
+- xclip
+- xsel
+
 ## Environment variables
 Follow the list of the env variables you can use:
 - `CRYPTEX_FOLDER`: it is folder where to store the boxes. You can set this variable to override the standard behaviour (searching the boxes in the `$HOME/.cryptex/boxes` folder).
