@@ -20,7 +20,7 @@ builds:
     goarch:
       - amd64
     env:
-      - CGO_ENABLED=1
+      # - CGO_ENABLED=1
       - CC=x86_64-linux-gnu-gcc
       
   - id: raptor_linux_arm64
@@ -29,7 +29,7 @@ builds:
     goarch:
       - arm64
     env:
-      - CGO_ENABLED=1
+      # - CGO_ENABLED=1
       - CC=aarch64-linux-gnu-gcc
 
   - id: raptor_darwin_amd64
@@ -38,7 +38,7 @@ builds:
     goarch:
       - amd64
     env:
-      - CGO_ENABLED=1
+      # - CGO_ENABLED=1
       - CC=o64-clang
 
   - id: raptor_darwin_arm64
@@ -47,7 +47,7 @@ builds:
     goarch:
       - arm64
     env:
-      - CGO_ENABLED=1
+      # - CGO_ENABLED=1
       - CC=arm64-apple-darwin20.2-clang
 
 archives:
