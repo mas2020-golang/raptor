@@ -24,26 +24,24 @@ jobs:
         name: Get dependencies
         run: |
           go get -t -x ./...
-      - name: Install dependencies for the clipboard go package
-        run: sudo apt-get update && sudo apt-get install -y libx11-dev
       -
         name: Test
         run: make testing
 
-      - name: Run GoReleaser within Docker
-        run: |
-          docker run --rm --privileged \
-            -v ${{ github.workspace }}:/workspace \
-            -v /var/run/docker.sock:/var/run/docker.sock \
-            -w /workspace \
-            goreleaser/goreleaser-cross:latest release --snapshot --clean
-        env:
-          GITHUB_TOKEN: ${{ secrets.CRYPTEX_TOKEN }}
-      # -
-      #   name: Run GoReleaser
-      #   uses: goreleaser/goreleaser-action@v2
-      #   with:
-      #     version: latest
-      #     args: release
+      # - name: Run GoReleaser within Docker
+      #   run: |
+      #     docker run --rm --privileged \
+      #       -v ${{ github.workspace }}:/workspace \
+      #       -v /var/run/docker.sock:/var/run/docker.sock \
+      #       -w /workspace \
+      #       goreleaser/goreleaser-cross:latest release --snapshot --clean
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.CRYPTEX_TOKEN }}
+      -
+        name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          version: latest
+          args: release
+        env:
+          GITHUB_TOKEN: ${{ secrets.CRYPTEX_TOKEN }}
