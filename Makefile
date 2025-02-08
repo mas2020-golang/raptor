@@ -12,14 +12,14 @@ goreleaser:
 
 install-on-mac: testing
 	@echo "start installing..."
-	CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -ldflags "-X main.GitCommit=${GIT_COMMIT}" -o bin/raptor-darwin-amd64 main.go
+	GOOS=darwin GOARCH=amd64 go build -ldflags "-X main.GitCommit=${GIT_COMMIT}" -o bin/raptor-darwin-amd64 main.go
 	@echo "copying into $(GOPATH)/bin..."
 	@cp bin/raptor-darwin-amd64 $(GOPATH)/bin/raptor
 	@echo "done!"
 
 install-on-linux: testing
 	@echo "start installing..."
-	CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -ldflags "-X main.GitCommit=${GIT_COMMIT}" -o ./bin/raptor-linux-amd64 main.go
+	GOOS=linux GOARCH=amd64 go build -ldflags "-X main.GitCommit=${GIT_COMMIT}" -o ./bin/raptor-linux-amd64 main.go
 	@echo "copying into $(GOPATH)/bin..."
 	@cp ./bin/raptor-linux-amd64 $(GOPATH)/bin/raptor
 	@echo "done!"
