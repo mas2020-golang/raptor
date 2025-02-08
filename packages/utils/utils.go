@@ -171,7 +171,7 @@ func OpenBox(boxName, pwd string) (string, string, *Box, error) {
 	}
 
 	// check if the boxName is a file, in case it is BoxPath is overrided by that
-	if validPath, _ := isValidFilePath(boxName); validPath {
+	if validPath, _ := IsValidFilePath(boxName); validPath {
 		BoxPath = boxName
 	}
 
@@ -237,7 +237,7 @@ func SaveBox(path, key string, box *Box) error {
 	return nil
 }
 
-func isValidFilePath(path string) (bool, error) {
+func IsValidFilePath(path string) (bool, error) {
 	info, err := os.Stat(path)
 	if err != nil {
 		if os.IsNotExist(err) {

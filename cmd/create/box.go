@@ -19,6 +19,7 @@ import (
 
 var (
 	owner string
+	force bool
 )
 
 // boxCmd represents the box command
@@ -40,8 +41,8 @@ it doesn't exist yet`,
 
 func init() {
 	AddBoxCmd.Flags().StringVarP(&owner, "owner", "o", "", "The owner of the box (e.g. --owner bar)")
+	AddBoxCmd.Flags().BoolVarP(&force, "force", "f", false, "Create the box at the corresponding path")
 }
-
 
 func create(args []string) error {
 	var err error
@@ -68,10 +69,13 @@ func createHomeFolder() error {
 	return err
 }
 
-// TODO: refactor the box creation using the YAML box (look at the `YAML info.md` file)
 func createBox(name, owner string) error {
+	var boxPath string
+	if force {
+		boxPath = name
+	}
 	// get the folder box
-	boxPath, err := utils.GetFolderBox()
+	boxFolder, err := utils.GetFolderBox()
 	if err != nil {
 		return fmt.Errorf("problem to determine the folder box: %v", err)
 	}
@@ -83,8 +87,12 @@ func createBox(name, owner string) error {
 		LastUpdated: time.Now().Format(time.RFC3339),
 	}
 
+	if len(boxPath) == 0 {
+		boxPath = path.Join(boxFolder, b.Name)
+	}
+
 	// check if the box already exists
-	_, err = os.Stat(path.Join(boxPath, b.Name))
+	_, err = os.Stat(boxPath)
 	if err == nil {
 		return fmt.Errorf("problem to determine the folder box: %v", err)
 	}
@@ -106,7 +114,7 @@ func createBox(name, owner string) error {
 		return err
 	}
 	// write the box into the disk
-	err = ioutil.WriteFile(path.Join(boxPath, b.Name), encOut, 0644)
+	err = ioutil.WriteFile(boxPath, encOut, 0644)
 	if err != nil {
 		return fmt.Errorf("failed to write the box: %v", err)
 	}
