@@ -12,7 +12,8 @@ import (
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
-	"golang.design/x/clipboard"
+	// "golang.design/x/clipboard"
+	"github.com/atotto/clipboard"
 )
 
 var boxName string
@@ -49,12 +50,15 @@ func get(name string) {
 	}
 	// copy the secret into the clipboard
 	// Initialize the clipboard
-	err = clipboard.Init()
-	if err != nil {
-		panic(err)
-	}
+	// err = clipboard.Init()
+	// if err != nil {
+	// 	panic(err)
+	// }
 	// Write text to the clipboard
-	clipboard.Write(clipboard.FmtText, []byte(s))
+	err = clipboard.WriteAll(s)
+	if err != nil {
+		output.Error("", err.Error())
+	}
 	// err = execCmd(s)
 	// utils.Check(err, "")
 	fmt.Println()
