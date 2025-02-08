@@ -27,11 +27,21 @@ jobs:
       -
         name: Test
         run: make testing
+
+      # - name: Run GoReleaser within Docker
+      #   run: |
+      #     docker run --rm --privileged \
+      #       -v ${{ github.workspace }}:/workspace \
+      #       -v /var/run/docker.sock:/var/run/docker.sock \
+      #       -w /workspace \
+      #       goreleaser/goreleaser-cross:latest release --snapshot --clean
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.CRYPTEX_TOKEN }}
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
           version: latest
-          args: release --rm-dist
+          args: release
         env:
-          GITHUB_TOKEN: ${{ secrets.CRYPTEX_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RAPTOR_TKN }}
