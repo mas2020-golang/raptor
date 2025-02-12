@@ -25,7 +25,13 @@ func newOpenCmd() *cobra.Command {
 		Aliases: []string{"op", "open"},
 		// Args:    cobra.MinimumNArgs(1),
 		Short:   "Open a box in interactive mode",
-		Long:    ``,
+		Long:    `Interactive mode is the simplest way to get the secrets giving you the ability to keep your box open.
+You can open a box giving:
+- the fs path (e.g. /Users/test/mybox)
+- the name: raptor will search the box in the CRYPTEX_FOLDER env variable (if set) or in the $HOME/.cryptex folder
+
+If you omit the name raptor will try to fetch the CRYPTEX_BOX env variable value.
+If any of the previous checks gives the right path raptor will throw an error.`,
 		Example: `$ raptor open 'test'`,
 		Run: func(cmd *cobra.Command, args []string) {
 			boxName := ""

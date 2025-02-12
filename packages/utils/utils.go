@@ -169,6 +169,12 @@ func OpenBox(boxName, pwd string) (string, string, *Box, error) {
 	if BufferBox != nil {
 		return BoxPath, BoxPwd, BufferBox, nil
 	}
+
+	// check if the boxName is a file, in case it is BoxPath is overrided by that
+	if validPath, _ := IsValidFilePath(boxName); validPath {
+		BoxPath = boxName
+	}
+
 	// search the CRYPTEX_BOX env if name is empty
 	if len(boxName) == 0 {
 		boxName = os.Getenv("CRYPTEX_BOX")
@@ -182,8 +188,11 @@ func OpenBox(boxName, pwd string) (string, string, *Box, error) {
 		return "", "", nil, fmt.Errorf("problem to determine th folder box: %v", err)
 	}
 
-	// read the box
-	BoxPath = path.Join(boxFolder, boxName)
+	// read the box (if it is not assigned yet)
+	if len(BoxPath) == 0 {
+		BoxPath = path.Join(boxFolder, boxName)
+	}
+
 	in, err := ioutil.ReadFile(BoxPath)
 	if err != nil {
 		return "", "", nil, fmt.Errorf("reading the file box in %s: %v", BoxPath, err)
@@ -226,4 +235,18 @@ func SaveBox(path, key string, box *Box) error {
 		return fmt.Errorf("failed to write the box: %v", err)
 	}
 	return nil
+}
+
+func IsValidFilePath(path string) (bool, error) {
+	info, err := os.Stat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			// Path does not exist
+			return false, nil
+		}
+		// An error occurred while trying to access the path
+		return false, err
+	}
+	// Check if the path is a file (not a directory)
+	return !info.IsDir(), nil
 }
