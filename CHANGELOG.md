@@ -5,9 +5,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [Unreleased]
+## [0.2.0](https://github.com/mas2020-golang/raptor/releases/tag/v0.2.0) - 2024-02-12
 
-## [0.1.0-rc.1](https://github.com/mas2020-golang/raptor/releases/tag/v0.1.0-rc.1) - 2022-05-14
+### Added
+
+- 66816fd (#39) add the box name to the end of the secret ls command
+- f783c94 (#50) add the CRYPTEX_FOLDER env variable to set a box folder other than the default one
+- 8eda61c change version to 0.2.0-dev
+- fdfafb5 feature/67 add the interactive box mode (#72)
+- 3098de0 feature/77 install goreleaser and test it locally (#79)
+- 2e678e6 feature/78 open a box giving the path (#78)
+- 7416dc5 fix: print command interrupts the app when the given secret is not existing in the box (#76)
+- 17c6229 fix: verbose mode gets reset after executing the print command (#74)
+- 321c6bb refactor(box): replace proto buffer with the YAML box representation (#66)
+- b69ea1e set version to 0.2.0
+- dec8b01 use the goutils module for the cryptex output
+
+## [0.1.0](https://github.com/mas2020-golang/raptor/releases/tag/v0.1.0-rc.1) - 2022-05-14
 
 ### Added
 - Add the 'box create' command
