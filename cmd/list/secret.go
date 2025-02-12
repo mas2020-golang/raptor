@@ -62,9 +62,9 @@ func listSecrets(cmd *cobra.Command) {
 			url = s.Url[0:42] + "..."
 		}
 		url = output.BlueS(fmt.Sprintf("%-47s", url))
-		if len(s.Notes) > 30 {
-			s.Notes = s.Notes[0:26] + "..."
-		}
+		// if len(s.Notes) > 30 {
+		// 	s.Notes = s.Notes[0:26] + "..."
+		// }
 		nameFormatS := fmt.Sprintf("%s%ds", "%-", maxName+2)
 		name = output.RedS(output.BoldS(fmt.Sprintf(nameFormatS, s.Name)))
 		lastUpdated := s.LastUpdated
