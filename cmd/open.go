@@ -88,11 +88,7 @@ func interactiveOpen(boxName string) error {
 		clearScreen()
 		os.Args = []string{"raptor"}
 		os.Args = append(os.Args, strings.Split(input, " ")...)
-		if err := rootCmd.Execute(); err != nil {
-			output.Error("", err.Error())
-		}
-
-		//showOutput()
+		rootCmd.Execute()
 	}
 
 	if err := scanner.Err(); err != nil {
