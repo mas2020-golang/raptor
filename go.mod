@@ -11,6 +11,7 @@ require (
 )
 
 require (
+	github.com/0x9ef/go-wiper v0.0.0-20211115141551-9c4041500a2a // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect

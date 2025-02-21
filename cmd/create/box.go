@@ -78,12 +78,12 @@ func createBox(name, owner string) error {
 	var boxPath string
 	if force {
 		boxPath = name
-		
 	}
 	// get the folder box
 	boxFolder, err := utils.GetFolderBox()
+	slog.Debug(fmt.Sprintf("boxFolder is %s", boxFolder))
 	if err != nil {
-		return fmt.Errorf("problem to determine the folder box: %v", err)
+		return fmt.Errorf("problem to determine the folder box: %v", err.Error())
 	}
 
 	b := utils.Box{
@@ -100,9 +100,10 @@ func createBox(name, owner string) error {
 	slog.Debug("create.createBox()", "boxPath", boxPath)
 
 	// check if the box already exists
+	slog.Debug(fmt.Sprintf("boxPath is %s", boxPath))
 	_, err = os.Stat(boxPath)
-	if err == nil {
-		return fmt.Errorf("problem to determine the folder box: %v", err)
+	if err != nil {
+		return fmt.Errorf("problem to determine the boxPath: %v", err.Error())
 	}
 
 	out, err := yaml.Marshal(b)

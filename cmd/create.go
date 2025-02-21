@@ -29,7 +29,7 @@ to an existing secret as well. (not available in interactive mode)`,
 	// Here you will define your flags and configuration settings.
 	c.AddCommand(create.AddBoxCmd)
 	c.AddCommand(create.AddSecretCmd)
-	c.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "to get more information use the verbose mode")
+	c.AddCommand(create.NewPasswordCmd())
 
 	return c
 }

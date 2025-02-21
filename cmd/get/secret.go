@@ -23,10 +23,10 @@ var GetSecretCmd = &cobra.Command{
 	Use:     "secret <NAME>",
 	Args:    cobra.MinimumNArgs(1),
 	Aliases: []string{"sr"},
-	Short:   "Get the sensitive info from a secret (*available in interactive mode only)",
-	Long: `Get the sensitive info from a secret. You can refer to the data as:
-- <SECRET_NAME>: retrieves the root pwd for the secret
-- <SECRET_NAME>.<ITEM_NAME>: retrieves the ITEM_NAME in the items collection`,
+	Short:   "Get the sensitive data from a secret",
+	Long: `Get the sensitive data from a secret. You can refer to the data as:
+- <SECRET_NAME>: retrieves the root sensitive data for the secret
+- <SECRET_NAME>.<ITEM_NAME>: retrieves the ITEM_NAME sensitive data in the items collection`,
 	Example: `$ raptor get secret foo --box test // to retrieve the pwd of the foo secret
 $ raptor get secret foo.test --box test // to retrieve the test secret item of the foo secret`,
 	Run: func(cmd *cobra.Command, args []string) {

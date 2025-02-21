@@ -34,7 +34,6 @@ The <NAME> argument is in the following format:
 
 func init() {
 	EditSecretCmd.PersistentFlags().StringVarP(&boxName, "box", "b", "", "The name of the box where to add the secret")
-	EditSecretCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "to get more information use the verbose mode")
 }
 
 func edit(name string) {

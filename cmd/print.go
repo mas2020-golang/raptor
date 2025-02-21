@@ -24,7 +24,5 @@ func newPrintCmd() *cobra.Command {
 
 	// Here you will define your flags and configuration settings.
 	c.AddCommand(print.PrintSecretCmd)
-	c.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "to get more information use the verbose mode")
-
 	return c
 }
