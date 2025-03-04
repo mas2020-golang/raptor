@@ -101,9 +101,8 @@ func createBox(name, owner string) error {
 
 	// check if the box already exists
 	slog.Debug(fmt.Sprintf("boxPath is %s", boxPath))
-	_, err = os.Stat(boxPath)
-	if err != nil {
-		return fmt.Errorf("problem to determine the boxPath: %v", err.Error())
+	if _, err := os.Stat(boxPath); err == nil {
+		return fmt.Errorf("boxPath already exists: %v", boxPath)
 	}
 
 	out, err := yaml.Marshal(b)
