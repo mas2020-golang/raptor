@@ -56,7 +56,7 @@ func encrypt(path string) error {
 		}
 	}
 
-	passphrase, err := utils.AskForPassword("Password: ", false)
+	passphrase, err := utils.AskForPassword("Password: ", true)
 	if err != nil {
 		return fmt.Errorf("%s", err.Error())
 	}

@@ -136,7 +136,7 @@ func AskForPassword(text string, twice bool) (key string, err error) {
 			}
 			fmt.Println("")
 			if key != key2 {
-				return "", fmt.Errorf("the passwords need to be the same")
+				return "", fmt.Errorf("the passwords do not correspond")
 			}
 		}
 		if len(key) < 6 {
