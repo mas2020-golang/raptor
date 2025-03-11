@@ -136,7 +136,7 @@ func AskForPassword(text string, twice bool) (key string, err error) {
 			}
 			fmt.Println("")
 			if key != key2 {
-				return "", fmt.Errorf("the passwords need to be the same")
+				return "", fmt.Errorf("the passwords do not correspond")
 			}
 		}
 		if len(key) < 6 {
@@ -170,7 +170,7 @@ func OpenBox(boxName, pwd string) (string, string, *Box, error) {
 		return BoxPath, BoxPwd, BufferBox, nil
 	}
 
-	// check if the boxName is a file, in case it is BoxPath is overrided by that
+	// check if the boxName is a file, in that case BoxPath is overrided by that
 	if validPath, _ := IsValidFilePath(boxName); validPath {
 		BoxPath = boxName
 	}

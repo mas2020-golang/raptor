@@ -44,6 +44,8 @@ func init() {
 	rootCmd.AddCommand(newGetCmd())
 	rootCmd.AddCommand(newPrintCmd())
 	rootCmd.AddCommand(newOpenCmd())
+	rootCmd.AddCommand(newEncryptCmd())
+	rootCmd.AddCommand(newDecryptCmd())
 
-	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Give more information about the command execution")
 }
