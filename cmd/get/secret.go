@@ -9,9 +9,12 @@ import (
 	"runtime"
 	"strings"
 
+	"log/slog"
+
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
+
 	// "golang.design/x/clipboard"
 	"github.com/atotto/clipboard"
 )
@@ -74,8 +77,9 @@ func searchSecretPwd(name string, box *utils.Box) (value string, err error) {
 	elems := strings.Split(name, ".")
 	secretName = elems[0]
 	if len(elems) > 1 {
-		secretItem = elems[1]
+		secretItem = strings.Join(elems[1:], "")
 	}
+	slog.Debug("get.searchSecretPwd()", "secretName", secretName, "secretItem", secretItem)
 	if box.Secrets != nil {
 		for _, s := range box.Secrets {
 			// fmt.Printf("secret in the box: %s\n", s.Name)

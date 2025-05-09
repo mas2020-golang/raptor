@@ -116,6 +116,25 @@ func GetTextWithEsc(reader *bufio.Reader) string {
 	}
 }
 
+func GetComplexText() (string, error) {
+	var note strings.Builder
+	scanner := bufio.NewScanner(os.Stdin)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		if line == "EOF" {
+			break
+		}
+		note.WriteString(line + "\n")
+	}
+
+	if err := scanner.Err(); err != nil {
+		return "", fmt.Errorf("error reading input: %v", err)
+	}
+
+	return note.String(), nil
+}
+
 // askForPassword asks for a password once or twice. You can change
 // the default requested text. Returns the key to use
 func AskForPassword(text string, twice bool) (key string, err error) {

@@ -29,6 +29,7 @@ var (
 	cellStyle    = lipgloss.NewStyle().Padding(0, 1).Width(14)
 	oddRowStyle  = cellStyle.Foreground(gray)
 	evenRowStyle = cellStyle.Foreground(lightGray)
+	messageStyle = lipgloss.NewStyle().Bold(true).Foreground(lightGray)
 )
 
 // boxCmd represents the box command
@@ -63,6 +64,10 @@ func listSecrets(cmd *cobra.Command) {
 	maxName := getMaxNameLenght(box)
 	maxLogin := getMaxLoginLenght(box)
 
+	if len(box.Secrets) == 0 {
+		fmt.Println(messageStyle.Render("No secrets yet..."))
+		return
+	}
 	// table format
 	t := table.New().
 		Headers("NAME", "VERSION", "LOGIN", "URL", "ITEMS", "LAST-UPD").
