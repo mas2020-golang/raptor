@@ -24,7 +24,7 @@ var (
 
 func newOpenCmd() *cobra.Command {
 	c := &cobra.Command{
-		Use:     "open <BOX-NAME>",
+		Use:     "open [BOX-NAME]",
 		Aliases: []string{"op", "open"},
 		// Args:    cobra.MinimumNArgs(1),
 		Short: "Open a box in interactive mode",
@@ -34,7 +34,7 @@ You can open a box giving:
 - the name: raptor will search the box in the CRYPTEX_FOLDER env variable (if set) or in the $HOME/.cryptex folder
 
 If you omit the name raptor will try to fetch the CRYPTEX_BOX env variable value.
-If any of the previous checks gives the right path raptor will throw an error.`,
+If any of the previous checks doesn't give the right path raptor will throw an error.`,
 		Example: `$ raptor open 'test'`,
 		Run: func(cmd *cobra.Command, args []string) {
 			boxName := ""
@@ -67,8 +67,6 @@ func interactiveOpen(boxName string) error {
 			return nil
 		}
 		timeout = time.Duration(secsTimeout) * time.Second
-		// Use the logLevel variable as needed
-
 	}
 	output.InfoBox(fmt.Sprintf("RAPTOR_TIMEOUT_SEC is set to %v", timeout))
 
