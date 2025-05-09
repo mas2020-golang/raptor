@@ -100,16 +100,19 @@ func editSecret(name string, box *utils.Box, boxPath string) error {
 	fmt.Printf("Do you want to change the notes? [Y/n] ")
 	answer := utils.GetText(r)
 	if answer == "Y" {
-		fmt.Println(output.BlueS("\nNew Notes: (to save type '>>' and press ENTER)"))
-		input = utils.GetTextWithEsc(r)
-		if len(input) != 0 && input != "ERROR!" {
+		fmt.Println(output.BlueS("\nEnter your note (type 'EOF' on a new line to finish):"))
+		input, err = utils.GetComplexText()
+		if err != nil {
+			return err
+		}
+		if len(input) != 0 {
 			s.Notes = input
 		}
 		fmt.Println(output.BlueS(strings.Repeat("-", 35)))
-		utils.GetText(r)
+		// utils.GetText(r)
 	}
 	if s.Others != nil {
-		output.BlueOut(fmt.Sprintf("\nItems:\n"))
+		output.BlueOut("\nItems:\n")
 		for k, v := range s.Others {
 			fmt.Printf("%s [%s]: ", k, v)
 			input = utils.GetText(r)

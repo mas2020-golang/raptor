@@ -86,10 +86,14 @@ func addSecret(name string, box *utils.Box) error {
 	}
 	fmt.Print(output.BlueS("\nUrl: "))
 	s.Url = utils.GetText(r)
-	fmt.Println(output.BlueS("Notes (to save type '>>' and press ENTER):"))
-	s.Notes = utils.GetTextWithEsc(r)
+	fmt.Println(output.BlueS("\nEnter your note (type 'EOF' on a new line to finish):"))
+	input, err = utils.GetComplexText()
+	if err != nil {
+		return err
+	}
+	s.Notes = input
 	fmt.Println(output.BlueS(strings.Repeat("-", 35)))
-	utils.GetText(r)
+	// utils.GetText(r) 
 	fmt.Printf("Do you have other secres to add? [Y/n] ")
 	answer := utils.GetText(r)
 	if answer == "Y" {
@@ -97,6 +101,11 @@ func addSecret(name string, box *utils.Box) error {
 		for {
 			fmt.Print(output.BlueS("Name: "))
 			n := utils.GetText(r)
+			// chars check
+			if strings.Contains(n, ".") {
+				output.Error("", "the name cannot contain the '.' character")
+				continue
+			}
 			fmt.Print(output.BlueS("Value: "))
 			v := utils.GetText(r)
 			s.Others[n] = v
