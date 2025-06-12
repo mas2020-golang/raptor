@@ -19,6 +19,7 @@ import (
 var EditSecretCmd = &cobra.Command{
 	Use:   "secret <NAME>",
 	Args:  cobra.MinimumNArgs(1),
+	Aliases: []string{"secret", "sr"},
 	Short: "Edit an existing secret",
 	Long: `Edit a secret by name:
 The <NAME> argument is in the following format:

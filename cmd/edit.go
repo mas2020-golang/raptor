@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -12,9 +11,10 @@ import (
 // boxCmd represents the box command
 func newEditCmd() *cobra.Command {
 	c := &cobra.Command{
-		Use:   "edit",
-		Short: "Edit a raptor object",
-		Long:  `Edit a raptor object: secret`,
+		Use:     "edit",
+		Aliases: []string{"secret", "sr"},
+		Short:   "Edit a raptor object",
+		Long:    `Edit a raptor object: secret`,
 	}
 	// Here you will define your flags and configuration settings.
 	// Here you will define your flags and configuration settings.
