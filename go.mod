@@ -8,7 +8,7 @@ require (
 	github.com/0x9ef/go-wiper v0.0.0-20211115141551-9c4041500a2a
 	github.com/atotto/clipboard v0.1.4
 	github.com/charmbracelet/lipgloss v1.1.0
-	github.com/mas2020-golang/goutils v0.8.1
+	github.com/mas2020-golang/goutils v0.9.0
 	github.com/spf13/cobra v1.9.1
 	golang.org/x/term v0.32.0
 	gopkg.in/yaml.v2 v2.4.0
