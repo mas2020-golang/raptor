@@ -11,7 +11,7 @@ import (
 
 	"github.com/mas2020-golang/cryptex/packages/security"
 	"github.com/mas2020-golang/cryptex/packages/utils"
-	"github.com/mas2020-golang/goutils/output"
+	"github.com/mas2020-golang/goutils/console"
 	"github.com/spf13/cobra"
 )
 
@@ -31,10 +31,11 @@ each file in in the path.`,
 			slog.Debug("encrypt run", "path", args[0])
 			if err := decrypt(args[0]); err != nil {
 				if !errors.Is(err, security.ErrInvalidFile) {
-					output.Error("", err.Error())
+					console.Error(err.Error(), true)
+					//output.Error("", err.Error())
 				}
 			} else {
-				output.Success("Decryption succeded")
+				console.OK("Decryption succeded")
 			}
 		},
 	}
