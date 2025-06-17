@@ -13,3 +13,6 @@ Follow the list of the env variables you can use:
 - `CRYPTEX_BOX`: setting this variable if you can avoid to pass the `--box` flag
 - `RAPTOR_LOGLEVEL`: set it for logging purposes and debugging sessions. Accepted values are: `debug`, `info`, `warn`, `error`. Default level set to error.
 - `RAPTOR_TIMEOUT_SEC`: number of seconds of inactivity before the application exits (default 10 mins).
+
+
+

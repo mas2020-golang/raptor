@@ -46,6 +46,7 @@ func init() {
 	rootCmd.AddCommand(newOpenCmd())
 	rootCmd.AddCommand(newEncryptCmd())
 	rootCmd.AddCommand(newDecryptCmd())
+	rootCmd.AddCommand(newInfoCmd())
 
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Give more information about the command execution")
 }
