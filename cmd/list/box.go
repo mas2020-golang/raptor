@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package list
 
@@ -9,54 +8,105 @@ import (
 	"io/fs"
 	"os"
 	"regexp"
+	"strconv"
 
 	"github.com/mas2020-golang/cryptex/packages/utils"
-	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
 )
 
-var ListBoxCmd = &cobra.Command{
-	Use:     "boxes",
-	Aliases: []string{"bo", "box"},
-	Short:   "List the boxes",
-	Long: `List the boxes present in the box folder. You can filter
+// // String returns a formatted string representation of the box
+// func (b utils.Box) String() string {
+// 	return
+// }
+
+//
+
+// NewListBoxCmd creates and returns a new list boxes command
+func NewListBoxCmd() *cobra.Command {
+	var filter string
+
+	cmd := &cobra.Command{
+		Use:     "boxes",
+		Aliases: []string{"bo", "box"},
+		Short:   "List the boxes",
+		Long: `List the boxes present in the box folder. You can filter
 using a regular expression.`,
-	Example: `$ cryptex ls box --name 'test.*''`,
-	Run: func(cmd *cobra.Command, args []string) {
-		listBoxes(cmd)
-	},
+		Example: `$ cryptex ls box --filter 'test.*'`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return runListBoxes(filter)
+		},
+	}
+
+	cmd.Flags().StringVarP(&filter, "filter", "f", "", "Filter boxes by name using regexp (e.g. 'test.*')")
+
+	return cmd
 }
 
-func init() {
-	ListBoxCmd.Flags().StringVarP(&filter, "filter", "f", "", "The name of the box as a regexp (e.g. 'test.*')")
+func runListBoxes(filter string) error {
+	boxes, err := ListBoxes(filter)
+	if err != nil {
+		return fmt.Errorf("error retrieving boxes: %w", err)
+	}
+
+	printBoxes(boxes)
+	return nil
 }
 
-func listBoxes(cmd *cobra.Command) {
-	var files []fs.DirEntry
-	// get the folder box
-	folderBox, err := utils.GetFolderBox()
-	utils.Check(err, "")
-
-	files, err = os.ReadDir(folderBox)
-	utils.Check(err, "")
-
+func printBoxes(boxes []utils.Box) {
 	fmt.Printf("%-25s%s\n", "NAME", "SIZE")
-	for _, file := range files {
-		fi, err := file.Info()
-		utils.Check(err, fmt.Sprintf("problem getting the size of the file %s", file.Name()))
-		// if --name is present check for the regular expression
-		if len(filter) > 0 {
-			r, _ := regexp.Compile(filter)
-			if r.MatchString(file.Name()) {
-				fmt.Printf("%-25s%d\n", file.Name(), fi.Size())
-			}
-		} else {
-			fmt.Printf("%-25s%d\n", file.Name(), fi.Size())
+	for _, b := range boxes {
+		fmt.Printf("%-25s%s\n", b.Name, strconv.FormatInt(b.Size, 10))
+	}
+}
+
+func ListBoxes(filter string) ([]utils.Box, error) {
+	folderBox, err := utils.GetFolderBox()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get box folder: %w", err)
+	}
+
+	files, err := os.ReadDir(folderBox)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read directory %s: %w", folderBox, err)
+	}
+
+	var filterRegex *regexp.Regexp
+	if filter != "" {
+		filterRegex, err = regexp.Compile(filter)
+		if err != nil {
+			return nil, fmt.Errorf("invalid regex pattern '%s': %w", filter, err)
 		}
 	}
-	v, _ := cmd.Parent().Flags().GetBool("verbose")
-	if v {
-		fmt.Println()
-		output.InfoBox(fmt.Sprintf("box folder set to %s\n", output.BlueS(folderBox)))
+
+	var boxes []utils.Box
+	for _, file := range files {
+		if shouldIncludeFile(file, filterRegex) {
+			box, err := createBoxFromFile(file)
+			if err != nil {
+				return nil, fmt.Errorf("failed to process file %s: %w", file.Name(), err)
+			}
+			boxes = append(boxes, box)
+		}
 	}
+
+	return boxes, nil
+}
+
+func shouldIncludeFile(file fs.DirEntry, filterRegex *regexp.Regexp) bool {
+	if filterRegex == nil {
+		return true
+	}
+	return filterRegex.MatchString(file.Name())
+}
+
+func createBoxFromFile(file fs.DirEntry) (utils.Box, error) {
+	fileInfo, err := file.Info()
+	if err != nil {
+		return utils.Box{}, err
+	}
+
+	return utils.Box{
+		Name: file.Name(),
+		Size: fileInfo.Size(),
+	}, nil
 }

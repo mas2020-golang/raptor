@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/mas2020-golang/cryptex/cmd/list"
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/spf13/cobra"
 )
@@ -21,7 +22,7 @@ var (
 			Border(lipgloss.RoundedBorder()).
 			BorderForeground(lipgloss.Color("62")).
 			PaddingTop(0).
-			PaddingBottom(1).
+			PaddingBottom(0).
 			PaddingLeft(2).
 			PaddingRight(2)
 		//Margin(1)
@@ -41,12 +42,11 @@ var (
 			MarginTop(1).
 			MarginBottom(1)
 
-			
 	// Key style (left column) - ensuring consistent alignment
 	keyStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("213")).
 			Bold(false).
-			Width(19).  // Increased width to accommodate longest key
+			Width(19). // Increased width to accommodate longest key
 			Align(lipgloss.Left)
 
 	// Value style (right column)
@@ -172,18 +172,25 @@ func DisplayEnvironmentInfo() {
 		content.WriteString(line + "\n")
 	}
 
-	// Add configuration status
-	statusSection := sectionStyle.Render("✅ Status")
-	content.WriteString(statusSection + "\n")
+	// Add configuration
+	boxSection := sectionStyle.Render("Boxes")
+	content.WriteString(boxSection + "\n")
 
-	status := getConfigurationStatus(envVars)
-	statusLine := lipgloss.JoinHorizontal(
+	boxes, err := getBoxes()
+	renderedBoxes := ""
+	if err != nil {
+		renderedBoxes = err.Error()
+	} else {
+		for _, b := range boxes {
+			renderedBoxes += fmt.Sprintf("- %s\n", b.Name)
+		}
+	}
+	boxesLine := lipgloss.JoinHorizontal(
 		lipgloss.Top,
-		keyStyle.Render("Config Status:"),
-		status,
+		keyStyle.Render(renderedBoxes),
 	)
 	// content.WriteString(statusLine + "\n")
-	content.WriteString(statusLine)
+	content.WriteString(boxesLine)
 
 	// Wrap everything in the container
 	final := containerStyle.Render(content.String())
@@ -209,28 +216,8 @@ func getLogLevelEmoji(level string) string {
 }
 
 // Helper function to determine configuration status
-func getConfigurationStatus(envVars []EnvVar) string {
-	allRequired := true
-	for _, envVar := range envVars {
-		if envVar.Required && os.Getenv(envVar.Key) == "" {
-			allRequired = false
-			break
-		}
-	}
-
-	if allRequired {
-		return lipgloss.NewStyle().
-			Foreground(lipgloss.Color("118")).
-			Bold(true).
-			MarginLeft(2).
-			Render("✅ All required variables set")
-	}
-
-	return lipgloss.NewStyle().
-		Foreground(lipgloss.Color("203")).
-		Bold(true).
-		MarginLeft(2).
-		Render("❌ Missing required variables")
+func getBoxes() ([]utils.Box, error) {
+	return list.ListBoxes("")
 }
 
 // Alternative compact version

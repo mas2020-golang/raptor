@@ -43,6 +43,7 @@ type Box struct {
 	LastUpdated string    `yaml:"lastUpdated,omitempty"`
 	Owner       string    `yaml:"owner,omitempty"`
 	Secrets     []*Secret `yaml:"secrets,omitempty"`
+	Size        int64     `yaml:"-"`
 }
 
 // GetBytesFromPipe reads from the pipe and return the buffer of bytes of the given argument
