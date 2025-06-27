@@ -6,6 +6,7 @@ package create
 import (
 	"fmt"
 	"io/ioutil"
+	"log/slog"
 	"os"
 	"path"
 	"time"
@@ -46,8 +47,10 @@ func init() {
 
 func create(args []string) error {
 	var err error
-	if err = createHomeFolder(); err != nil {
-		return err
+	if !force {
+		if err = createHomeFolder(); err != nil {
+			return err
+		}
 	}
 
 	return createBox(args[0], owner)
@@ -57,6 +60,7 @@ func createHomeFolder() error {
 	// get the folder box
 	boxPath, err := utils.GetFolderBox()
 	utils.Check(err, "problem to determine th folder box")
+	slog.Debug("create.createHomeFolder()", "boxPath", boxPath)
 	_, err = os.Stat(boxPath)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -70,14 +74,16 @@ func createHomeFolder() error {
 }
 
 func createBox(name, owner string) error {
+	slog.Debug("create.createBox()", "name", name, "owner", owner)
 	var boxPath string
 	if force {
 		boxPath = name
 	}
 	// get the folder box
 	boxFolder, err := utils.GetFolderBox()
+	slog.Debug(fmt.Sprintf("boxFolder is %s", boxFolder))
 	if err != nil {
-		return fmt.Errorf("problem to determine the folder box: %v", err)
+		return fmt.Errorf("problem to determine the folder box: %v", err.Error())
 	}
 
 	b := utils.Box{
@@ -91,10 +97,12 @@ func createBox(name, owner string) error {
 		boxPath = path.Join(boxFolder, b.Name)
 	}
 
+	slog.Debug("create.createBox()", "boxPath", boxPath)
+
 	// check if the box already exists
-	_, err = os.Stat(boxPath)
-	if err == nil {
-		return fmt.Errorf("problem to determine the folder box: %v", err)
+	slog.Debug(fmt.Sprintf("boxPath is %s", boxPath))
+	if _, err := os.Stat(boxPath); err == nil {
+		return fmt.Errorf("boxPath already exists: %v", boxPath)
 	}
 
 	out, err := yaml.Marshal(b)

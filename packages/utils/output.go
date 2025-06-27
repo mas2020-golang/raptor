@@ -28,7 +28,7 @@ func Success(text string) {
 	case "darwin":
 		fmt.Printf("%s%s%s\n", output.GreenS("👍 "), text, Reset)
 	case "linux":
-		fmt.Printf("%s%s%s\n", output.GreenS("✔ "), text, Reset)
+		fmt.Printf("%s%s%s\n", output.GreenS("👍 "), text, Reset)
 	default:
 		fmt.Printf("%s%s%s\n", output.GreenS("✔ "), text, Reset)
 	}
@@ -46,5 +46,11 @@ func Note(text string) {
 		fmt.Printf("%s%s%s\n", "✔ ", text, Reset)
 	default:
 		fmt.Printf("%s%s%s\n", output.GreenS("✔ "), text, Reset)
+	}
+}
+
+func Verbosity(msg string, verbose bool){
+	if verbose{
+		output.Activity(msg)
 	}
 }

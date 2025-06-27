@@ -27,7 +27,7 @@ func newListCmd() *cobra.Command {
 		Long:    `Show the specified raptor objects: boxes, secrets, items`,
 	}
 	// Here you will define your flags and configuration settings.
-	c.AddCommand(list.ListBoxCmd)
+	c.AddCommand(list.NewListBoxCmd())
 	c.AddCommand(list.ListSecretCmd)
 	c.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "to get more information use the verbose mode")
 

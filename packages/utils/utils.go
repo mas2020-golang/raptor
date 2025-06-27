@@ -22,7 +22,7 @@ var (
 )
 
 func init() {
-	Version = "0.2.0"
+	Version = "0.3.0-SNAPSHOT"
 }
 
 type Secret struct {
@@ -43,6 +43,7 @@ type Box struct {
 	LastUpdated string    `yaml:"lastUpdated,omitempty"`
 	Owner       string    `yaml:"owner,omitempty"`
 	Secrets     []*Secret `yaml:"secrets,omitempty"`
+	Size        int64     `yaml:"-"`
 }
 
 // GetBytesFromPipe reads from the pipe and return the buffer of bytes of the given argument
@@ -116,6 +117,25 @@ func GetTextWithEsc(reader *bufio.Reader) string {
 	}
 }
 
+func GetComplexText() (string, error) {
+	var note strings.Builder
+	scanner := bufio.NewScanner(os.Stdin)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		if line == "EOF" {
+			break
+		}
+		note.WriteString(line + "\n")
+	}
+
+	if err := scanner.Err(); err != nil {
+		return "", fmt.Errorf("error reading input: %v", err)
+	}
+
+	return note.String(), nil
+}
+
 // askForPassword asks for a password once or twice. You can change
 // the default requested text. Returns the key to use
 func AskForPassword(text string, twice bool) (key string, err error) {
@@ -136,7 +156,7 @@ func AskForPassword(text string, twice bool) (key string, err error) {
 			}
 			fmt.Println("")
 			if key != key2 {
-				return "", fmt.Errorf("the passwords need to be the same")
+				return "", fmt.Errorf("the passwords do not correspond")
 			}
 		}
 		if len(key) < 6 {
@@ -170,7 +190,7 @@ func OpenBox(boxName, pwd string) (string, string, *Box, error) {
 		return BoxPath, BoxPwd, BufferBox, nil
 	}
 
-	// check if the boxName is a file, in case it is BoxPath is overrided by that
+	// check if the boxName is a file, in that case BoxPath is overrided by that
 	if validPath, _ := IsValidFilePath(boxName); validPath {
 		BoxPath = boxName
 	}

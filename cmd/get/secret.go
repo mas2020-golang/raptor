@@ -9,9 +9,12 @@ import (
 	"runtime"
 	"strings"
 
+	"log/slog"
+
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
+
 	// "golang.design/x/clipboard"
 	"github.com/atotto/clipboard"
 )
@@ -23,10 +26,10 @@ var GetSecretCmd = &cobra.Command{
 	Use:     "secret <NAME>",
 	Args:    cobra.MinimumNArgs(1),
 	Aliases: []string{"sr"},
-	Short:   "Get the sensitive info from a secret (*available in interactive mode only)",
-	Long: `Get the sensitive info from a secret. You can refer to the data as:
-- <SECRET_NAME>: retrieves the root pwd for the secret
-- <SECRET_NAME>.<ITEM_NAME>: retrieves the ITEM_NAME in the items collection`,
+	Short:   "Get the sensitive data from a secret",
+	Long: `Get the sensitive data from a secret. You can refer to the data as:
+- <SECRET_NAME>: retrieves the root sensitive data for the secret
+- <SECRET_NAME>.<ITEM_NAME>: retrieves the ITEM_NAME sensitive data in the items collection`,
 	Example: `$ raptor get secret foo --box test // to retrieve the pwd of the foo secret
 $ raptor get secret foo.test --box test // to retrieve the test secret item of the foo secret`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -74,8 +77,9 @@ func searchSecretPwd(name string, box *utils.Box) (value string, err error) {
 	elems := strings.Split(name, ".")
 	secretName = elems[0]
 	if len(elems) > 1 {
-		secretItem = elems[1]
+		secretItem = strings.Join(elems[1:], "")
 	}
+	slog.Debug("get.searchSecretPwd()", "secretName", secretName, "secretItem", secretItem)
 	if box.Secrets != nil {
 		for _, s := range box.Secrets {
 			// fmt.Printf("secret in the box: %s\n", s.Name)
