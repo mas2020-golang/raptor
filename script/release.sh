@@ -1,133 +1,103 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Exit on any error
-set -e
+# Configuration
+VERSION_FILE="packages/utils/utils.go"   # adjust if needed
+VERSION_ASSIGN_REGEX='[[:space:]]*Version[[:space:]]*=[[:space:]]*"'
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+die() { echo "ERROR: $*" >&2; exit 1; }
+require_cmd() { command -v "$1" >/dev/null 2>&1 || die "Missing required command: $1"; }
 
-# Function to print colored output
-print_step() {
-    echo -e "${GREEN}[STEP]${NC} $1"
-}
+require_cmd git
+require_cmd awk
+require_cmd sed
 
-print_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
-}
+# Check on main branch
+current_branch="$(git rev-parse --abbrev-ref HEAD)"
+[ "$current_branch" = "main" ] || die "You are on '$current_branch'. Switch to 'main' to release."
 
-print_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
-
-# Check if utils.go exists
-if [ ! -f "utils.go" ]; then
-    print_error "utils.go file not found in current directory"
-    exit 1
-fi
-
-# Get current branch name
-CURRENT_BRANCH=$(git branch --show-current)
-if [ "$CURRENT_BRANCH" = "main" ]; then
-    print_error "Cannot run this script from main branch"
-    exit 1
-fi
-
-print_step "Current branch: $CURRENT_BRANCH"
-
-# Extract current version from utils.go
-CURRENT_VERSION=$(grep -o 'Version = "[^"]*"' utils.go | sed 's/Version = "\([^"]*\)"/\1/')
-print_step "Current version: $CURRENT_VERSION"
-
-# Remove -SNAPSHOT suffix for release version
-RELEASE_VERSION=$(echo "$CURRENT_VERSION" | sed 's/-SNAPSHOT//')
-print_step "Release version: $RELEASE_VERSION"
-
-# Check if we have uncommitted changes
+# Check clean tree
 if [ -n "$(git status --porcelain)" ]; then
-    print_warning "You have uncommitted changes. Please commit or stash them first."
-    exit 1
+  die "Working tree not clean. Commit or stash changes before releasing."
 fi
 
-# Step 1: Remove -SNAPSHOT from utils.go
-print_step "Removing -SNAPSHOT from utils.go"
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS
-    sed -i '' "s/Version = \"$CURRENT_VERSION\"/Version = \"$RELEASE_VERSION\"/" utils.go
-else
-    # Linux
-    sed -i "s/Version = \"$CURRENT_VERSION\"/Version = \"$RELEASE_VERSION\"/" utils.go
-fi
+[ -f "$VERSION_FILE" ] || die "Version file not found: $VERSION_FILE"
 
-# Commit the version change
-git add utils.go
-git commit -m "Release version $RELEASE_VERSION"
+# Extract current version from a line like:  Version = "0.3.0-SNAPSHOT"
+current_version="$(awk -v rx="$VERSION_ASSIGN_REGEX" '
+  match($0, rx"([0-9]+\\.[0-9]+\\.[0-9]+)(-SNAPSHOT)?(\")", m) { print m[1] (m[2]?m[2]:""); exit }
+' "$VERSION_FILE")"
 
-# Step 2: Create git tag
-print_step "Creating git tag: v$RELEASE_VERSION"
-git tag "v$RELEASE_VERSION"
+[ -n "$current_version" ] || die "Could not parse current version from $VERSION_FILE"
+case "$current_version" in
+  *-SNAPSHOT) ;;
+  *) die "Current version '$current_version' does not end with -SNAPSHOT. Aborting." ;;
+esac
 
-# Step 3: Switch to main and merge current branch
-print_step "Switching to main branch"
-git checkout main
-git pull origin main
+release_version="${current_version%-SNAPSHOT}"
+echo "Releasing version: $release_version"
 
-print_step "Merging $CURRENT_BRANCH into main"
-git merge "$CURRENT_BRANCH" --no-ff -m "Merge branch '$CURRENT_BRANCH' for release $RELEASE_VERSION"
+# sed-in-place portable helper
+inplace_sed() {
+  local script="$1" file="$2" tmp
+  tmp="$(mktemp "${file}.XXXX")"
+  sed "$script" "$file" > "$tmp"
+  mv "$tmp" "$file"
+}
 
-# Step 4: Delete the current branch locally and remotely
-print_step "Deleting branch $CURRENT_BRANCH locally and remotely"
-git branch -d "$CURRENT_BRANCH"
+# 1) Write release version (drop -SNAPSHOT) in VERSION_FILE
+# Replace only the first matching Version = "..."
+# BSD/GNU sed portable: do a pattern-based substitution
+sed_release="/$VERSION_ASSIGN_REGEX[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+\\(-SNAPSHOT\\)\\?\\\"/{
+  s//Version = \\\"$release_version\\\"/
+}"
+inplace_sed "$sed_release" "$VERSION_FILE"
 
-# Check if remote branch exists before trying to delete it
-if git ls-remote --heads origin "$CURRENT_BRANCH" | grep -q "$CURRENT_BRANCH"; then
-    git push origin --delete "$CURRENT_BRANCH"
-else
-    print_warning "Remote branch $CURRENT_BRANCH does not exist, skipping remote deletion"
-fi
+# Verify change
+after_release_version="$(awk -v rx="$VERSION_ASSIGN_REGEX" '
+  match($0, rx"([0-9]+\\.[0-9]+\\.[0-9]+)(-SNAPSHOT)?(\")", m) { print m[1] (m[2]?m[2]:""); exit }
+' "$VERSION_FILE")"
+[ "$after_release_version" = "$release_version" ] || die "Failed to set release version in $VERSION_FILE"
 
-# Step 5: Increment minor version and add -SNAPSHOT
-print_step "Incrementing version for next development cycle"
+# 2) Commit release on main
+git add "$VERSION_FILE"
+git commit -m "release: v$release_version"
 
-# Parse version components (assuming semantic versioning: major.minor.patch)
-IFS='.' read -ra VERSION_PARTS <<< "$RELEASE_VERSION"
-MAJOR=${VERSION_PARTS[0]}
-MINOR=${VERSION_PARTS[1]}
-PATCH=${VERSION_PARTS[2]}
+# 3) Tag the release
+git tag -a "v$release_version" -m "Release v$release_version"
 
-# Increment minor version
-NEW_MINOR=$((MINOR + 1))
-NEXT_DEV_VERSION="$MAJOR.$NEW_MINOR.0-SNAPSHOT"
+# 4) Compute next dev version: bump MINOR, set PATCH=0, add -SNAPSHOT
+IFS='.' read -r major minor patch <<<"$release_version"
+minor=$((minor + 1))
+next_dev_version="${major}.${minor}.0-SNAPSHOT"
 
-print_step "Next development version: $NEXT_DEV_VERSION"
+echo "Next development version: $next_dev_version"
 
-# Update utils.go with new development version
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS
-    sed -i '' "s/Version = \"$RELEASE_VERSION\"/Version = \"$NEXT_DEV_VERSION\"/" utils.go
-else
-    # Linux
-    sed -i "s/Version = \"$RELEASE_VERSION\"/Version = \"$NEXT_DEV_VERSION\"/" utils.go
-fi
+# 5) Write next dev version
+sed_next="/$VERSION_ASSIGN_REGEX[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+\\(-SNAPSHOT\\)\\?\\\"/{
+  s//Version = \\\"$next_dev_version\\\"/
+}"
+inplace_sed "$sed_next" "$VERSION_FILE"
 
-# Step 6: Create commit for next development version
-print_step "Creating commit for next development version"
-git add utils.go
-git commit -m "Starting the new development version: $NEXT_DEV_VERSION"
+# Verify next dev
+after_next_version="$(awk -v rx="$VERSION_ASSIGN_REGEX" '
+  match($0, rx"([0-9]+\\.[0-9]+\\.[0-9]+)(-SNAPSHOT)?(\")", m) { print m[1] (m[2]?m[2]:""); exit }
+' "$VERSION_FILE")"
+[ "$after_next_version" = "$next_dev_version" ] || die "Failed to set next development version in $VERSION_FILE"
 
-# Step 7: Push changes and tags remotely
-print_step "Pushing changes and tags to remote"
-git push origin main
-git push origin "v$RELEASE_VERSION"
+# 6) Commit next dev
+git add "$VERSION_FILE"
+git commit -m "chore: start next development cycle v$next_dev_version"
 
-print_step "Release process completed successfully!"
-print_step "Released version: $RELEASE_VERSION"
-print_step "Next development version: $NEXT_DEV_VERSION"
-print_step "Current branch: main"
+cat <<EOF
 
-# Cleanup: The script note mentions "delete the previous sprint" but that's already done
-# when we deleted the feature branch. If you meant something else, please clarify.
+Success!
+- Release commit:   v$release_version
+- Release tag:      v$release_version
+- Next dev version: $next_dev_version
 
-echo -e "${GREEN}✅ Release script completed successfully!${NC}"
+This script does NOT push to remote.
+To publish:
+  git push origin main
+  git push origin v$release_version
+EOF
