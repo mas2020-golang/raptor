@@ -22,7 +22,7 @@ var (
 )
 
 func init() {
-	Version = "0.3.0-SNAPSHOT"
+	Version = "0.3.0"
 }
 
 type Secret struct {
