@@ -1,15 +1,204 @@
 # Raptor
-Raptor is a CLI application to manage and in a fast and smart way your secrets. It is native app for Mac OS, Linux and Windows.
 
-## Installing raptor
+Raptor is a cross-platform CLI application for managing your secrets in a fast and smart way.  
+It lets you **encrypt and decrypt files or folders** and manage **encrypted boxes** (JSON-based containers) where you can safely store credentials, tokens, and other sensitive data.  
 
-We tested `raptor` on Linux and Mac. To work on Linux you need to get installed one of the following software:
-- xclip
-- xsel
+Raptor is designed to be simple, portable, and secure — working on macOS, Linux, and Windows.
 
-## Environment variables
-Follow the list of the env variables you can use:
-- `CRYPTEX_FOLDER`: it is folder where to store the boxes. You can set this variable to override the standard behaviour (default is searching the boxes in the `$HOME/.cryptex/boxes` folder).
-- `CRYPTEX_BOX`: setting this variable if you can avoid to pass the `--box` flag
-- `RAPTOR_LOGLEVEL`: set it for logging purposes and debugging sessions. Accepted values are: `debug`, `info`, `warn`, `error`. Default level set to error.
-- `RAPTOR_TIMEOUT_SEC`: number of seconds of inactivity before the application exits (default 10 mins).
+---
+
+## Installing Raptor
+
+### From Source
+You need Go 1.21 or later.
+
+```bash
+git clone https://github.com/your/repo.git
+cd raptor
+make build
+```
+
+This will produce a binary `raptor` in the project folder.
+
+### Linux Notes
+On Linux, clipboard features (copying secrets directly) require one of these utilities:
+- `xclip`
+- `xsel`
+
+Install them via your package manager if you want clipboard integration.
+
+---
+
+## Command Reference
+
+| Command | Description |
+|---------|-------------|
+| `raptor encrypt --in FILE --out FILE` | Encrypt a file |
+| `raptor decrypt --in FILE --out FILE` | Decrypt a file |
+| `raptor create box --name NAME` | Create a new box |
+| `raptor create secret --box NAME --name KEY --value VAL` | Add a secret to a box |
+| `raptor create password [--length N] [--symbols]` | Generate a random password |
+| `raptor list box` | List all existing boxes |
+| `raptor list secret --box NAME` | List secrets in a box |
+| `raptor get secret --box NAME --name KEY [--clip]` | Retrieve a secret (optionally copy to clipboard) |
+| `raptor edit secret --box NAME --name KEY` | Edit a secret in the default editor |
+| `raptor print box --box NAME` | Print all secrets in a box |
+| `raptor open --box NAME` | Open a box and keep it active until timeout |
+| `raptor version` | Show Raptor version info |
+
+Run `raptor help <command>` for full details on options.
+
+---
+
+## Typical Workflow
+
+Here’s a quick journey through Raptor’s main features:
+
+1. **Encrypt a file you want to protect**  
+   ```bash
+   raptor encrypt --in secrets.env --out secrets.env.enc
+   ```
+
+2. **Create a box to organize secrets**  
+   ```bash
+   raptor create box --name my-box
+   ```
+
+3. **Add secrets into the box**  
+   ```bash
+   raptor create secret --box my-box --name DB_PASSWORD --value "SuperSecret123"
+   raptor create secret --box my-box --name API_KEY --value "sk_live_abc123"
+   ```
+
+4. **List the secrets in your box**  
+   ```bash
+   raptor list secret --box my-box
+   ```
+
+5. **Retrieve a secret safely**  
+   ```bash
+   raptor get secret --box my-box --name API_KEY --clip
+   ```
+
+6. **Edit or update a secret when it changes**  
+   ```bash
+   raptor edit secret --box my-box --name DB_PASSWORD
+   ```
+
+7. **Print or open a box when you need to work interactively**  
+   ```bash
+   raptor open --box my-box
+   ```
+
+This flow covers the most common tasks: protecting files, creating secure containers, and handling credentials.
+
+---
+
+## Usage Examples
+
+### Encrypt a File
+```bash
+raptor encrypt --in secrets.env --out secrets.env.enc
+```
+
+### Decrypt a File
+```bash
+raptor decrypt --in secrets.env.enc --out secrets.env
+```
+
+### Create a Box
+```bash
+raptor create box --name my-box
+```
+
+### Add a Secret to a Box
+```bash
+raptor create secret --box my-box --name API_KEY --value "sk_live_xxx"
+```
+
+### Generate a Random Password
+```bash
+raptor create password --length 32 --symbols
+```
+
+### List Secrets in a Box
+```bash
+raptor list secret --box my-box
+```
+
+### Get a Secret and Copy to Clipboard
+```bash
+raptor get secret --box my-box --name API_KEY --clip
+```
+
+### Edit a Secret
+```bash
+raptor edit secret --box my-box --name API_KEY
+```
+
+---
+
+## Environment Variables
+
+Raptor behavior can be customized with environment variables:
+
+- **`CRYPTEX_FOLDER`**  
+  Folder where Raptor stores boxes.  
+  Default: `$HOME/.cryptex/boxes`
+
+- **`CRYPTEX_BOX`**  
+  Default box to use if `--box` is not provided.  
+
+- **`RAPTOR_LOGLEVEL`**  
+  Logging level: `debug`, `info`, `warn`, `error`  
+  Default: `error`
+
+- **`RAPTOR_TIMEOUT_SEC`**  
+  Timeout in seconds of inactivity before Raptor exits.  
+  Default: `600` (10 minutes)
+
+---
+
+## How It Works
+
+- **Encryption**: Files and boxes are encrypted using strong, authenticated encryption. Each box is a JSON file stored in encrypted form.  
+- **Secrets**: Inside a box, secrets are stored as key-value pairs. You can add, edit, list, and remove them without exposing other secrets.  
+- **Passphrases**: Boxes are protected by passphrases. Raptor derives keys from passphrases securely (using a memory-hard KDF).  
+- **Clipboard integration**: Secrets can be copied directly to clipboard, reducing accidental leaks in terminals.  
+
+---
+
+## Development
+
+To build:
+
+```bash
+make build
+```
+
+To run tests:
+
+```bash
+make test
+```
+
+Lint and vet:
+
+```bash
+go vet ./...
+golangci-lint run
+```
+
+---
+
+## Contributing
+
+Contributions are welcome!  
+- Open issues for bugs or feature requests.  
+- Submit PRs with tests and docs updated.  
+
+---
+
+## License
+
+See [LICENSE](LICENSE).
