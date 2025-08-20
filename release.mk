@@ -12,6 +12,6 @@ release:
 	@$(RELEASE_SCRIPT)
 ifeq ($(PUSH),1)
 	@git push origin main
-	@# Push the newest tag
+	@# Push the newest tag as well
 	@git push --follow-tags origin main
 endif

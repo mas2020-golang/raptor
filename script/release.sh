@@ -1,34 +1,33 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Configuration
-VERSION_FILE="packages/utils/utils.go"   # adjust if needed
-VERSION_ASSIGN_REGEX='[[:space:]]*Version[[:space:]]*=[[:space:]]*"'
+# === Config ===
+VERSION_FILE="packages/utils/utils.go"     # path to the file containing: Version = "X.Y.Z[-SNAPSHOT]"
+VERSION_RE='Version[[:space:]]*=[[:space:]]*"'  # left side of the assignment (no number here)
 
+# === Helpers ===
 die() { echo "ERROR: $*" >&2; exit 1; }
 require_cmd() { command -v "$1" >/dev/null 2>&1 || die "Missing required command: $1"; }
 
 require_cmd git
-require_cmd awk
 require_cmd sed
+require_cmd awk
 
-# Check on main branch
+# === Preconditions ===
 current_branch="$(git rev-parse --abbrev-ref HEAD)"
 [ "$current_branch" = "main" ] || die "You are on '$current_branch'. Switch to 'main' to release."
 
-# Check clean tree
 if [ -n "$(git status --porcelain)" ]; then
   die "Working tree not clean. Commit or stash changes before releasing."
 fi
 
 [ -f "$VERSION_FILE" ] || die "Version file not found: $VERSION_FILE"
 
-# Extract current version from a line like:  Version = "0.3.0-SNAPSHOT"
-current_version="$(awk -v rx="$VERSION_ASSIGN_REGEX" '
-  match($0, rx"([0-9]+\\.[0-9]+\\.[0-9]+)(-SNAPSHOT)?(\")", m) { print m[1] (m[2]?m[2]:""); exit }
-' "$VERSION_FILE")"
+# === Read current version ===
+# Extracts the first occurrence of Version = "X.Y.Z(-SNAPSHOT)?"
+current_version="$(sed -nE "s/.*(${VERSION_RE})([0-9]+\.[0-9]+\.[0-9]+)(-SNAPSHOT)?(\").*/\2\3/p" "$VERSION_FILE" | head -n1)"
+[ -n "$current_version" ] || die "Could not parse current version from $VERSION_FILE (expected: Version = \"X.Y.Z-SNAPSHOT\")"
 
-[ -n "$current_version" ] || die "Could not parse current version from $VERSION_FILE"
 case "$current_version" in
   *-SNAPSHOT) ;;
   *) die "Current version '$current_version' does not end with -SNAPSHOT. Aborting." ;;
@@ -37,26 +36,27 @@ esac
 release_version="${current_version%-SNAPSHOT}"
 echo "Releasing version: $release_version"
 
-# sed-in-place portable helper
-inplace_sed() {
-  local script="$1" file="$2" tmp
-  tmp="$(mktemp "${file}.XXXX")"
-  sed "$script" "$file" > "$tmp"
-  mv "$tmp" "$file"
+# Portable in-place write (BSD/GNU compatible) — replace only the FIRST match in file
+write_version() {
+  # $1: new version string (e.g., 1.2.3 or 1.3.0-SNAPSHOT)
+  local new_version="$1"
+  local tmp
+  tmp="$(mktemp "${VERSION_FILE}.XXXX")" || die "mktemp failed"
+  # Pattern that matches the full right-hand side with the number
+  local assign_pat='Version[[:space:]]*=[[:space:]]*"[0-9]+\.[0-9]+\.[0-9]+(-SNAPSHOT)?"'
+  # Use awk to replace the FIRST occurrence only (POSIX awk)
+  awk -v pat="$assign_pat" -v rep="Version = \"${new_version}\"" '
+    $0 ~ pat && !done { sub(pat, rep); done=1 }
+    { print }
+  ' "$VERSION_FILE" > "$tmp" || die "Failed to rewrite $VERSION_FILE"
+  mv "$tmp" "$VERSION_FILE"
 }
 
-# 1) Write release version (drop -SNAPSHOT) in VERSION_FILE
-# Replace only the first matching Version = "..."
-# BSD/GNU sed portable: do a pattern-based substitution
-sed_release="/$VERSION_ASSIGN_REGEX[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+\\(-SNAPSHOT\\)\\?\\\"/{
-  s//Version = \\\"$release_version\\\"/
-}"
-inplace_sed "$sed_release" "$VERSION_FILE"
+# 1) Write release version (drop -SNAPSHOT)
+write_version "$release_version"
 
-# Verify change
-after_release_version="$(awk -v rx="$VERSION_ASSIGN_REGEX" '
-  match($0, rx"([0-9]+\\.[0-9]+\\.[0-9]+)(-SNAPSHOT)?(\")", m) { print m[1] (m[2]?m[2]:""); exit }
-' "$VERSION_FILE")"
+# Verify write
+after_release_version="$(sed -nE "s/.*(${VERSION_RE})([0-9]+\.[0-9]+\.[0-9]+)(-SNAPSHOT)?(\").*/\2\3/p" "$VERSION_FILE" | head -n1)"
 [ "$after_release_version" = "$release_version" ] || die "Failed to set release version in $VERSION_FILE"
 
 # 2) Commit release on main
@@ -70,19 +70,11 @@ git tag -a "v$release_version" -m "Release v$release_version"
 IFS='.' read -r major minor patch <<<"$release_version"
 minor=$((minor + 1))
 next_dev_version="${major}.${minor}.0-SNAPSHOT"
-
 echo "Next development version: $next_dev_version"
 
-# 5) Write next dev version
-sed_next="/$VERSION_ASSIGN_REGEX[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+\\(-SNAPSHOT\\)\\?\\\"/{
-  s//Version = \\\"$next_dev_version\\\"/
-}"
-inplace_sed "$sed_next" "$VERSION_FILE"
-
-# Verify next dev
-after_next_version="$(awk -v rx="$VERSION_ASSIGN_REGEX" '
-  match($0, rx"([0-9]+\\.[0-9]+\\.[0-9]+)(-SNAPSHOT)?(\")", m) { print m[1] (m[2]?m[2]:""); exit }
-' "$VERSION_FILE")"
+# 5) Write next dev version and verify
+write_version "$next_dev_version"
+after_next_version="$(sed -nE "s/.*(${VERSION_RE})([0-9]+\.[0-9]+\.[0-9]+)(-SNAPSHOT)?(\").*/\2\3/p" "$VERSION_FILE" | head -n1)"
 [ "$after_next_version" = "$next_dev_version" ] || die "Failed to set next development version in $VERSION_FILE"
 
 # 6) Commit next dev
