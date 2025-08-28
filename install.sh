@@ -6,9 +6,9 @@
 
 export ALIAS_NAME="crptx"
 export OWNER=mas2020-golang
-export REPO=goal-modules
+export REPO=raptor
 export BINLOCATION="/usr/local/bin"
-export APP_NAME="raptor" # the name of the untar application
+export APP_NAME="raptor"
 export SUCCESS_CMD="${BINLOCATION}/${APP_NAME} version"
 
 # -- COLORS
@@ -59,12 +59,12 @@ getPackage() {
         arch=$(uname -m)
         case $arch in
         "x86_64")
-            suffix="Darwin-x86_64"
+            suffix="Darwin_x86_64"
             ;;
         esac
         case $arch in
         "arm64")
-            suffix="Darwin-arm64"
+            suffix="Darwin_arm64"
             ;;
         esac
         ;;
@@ -79,20 +79,20 @@ getPackage() {
         arch=$(uname -m)
         case $arch in
         "aarch64")
-            suffix="Linux-arm64"
+            suffix="Linux_arm64"
             ;;
         esac
         case $arch in
         "x86_64")
-            suffix="Linux-x86_64"
+            suffix="Linux_x86_64"
             ;;
         esac
         ;;
     esac
 
     #cryptex_0.1.0-rc.1_Linux-x86_64.tar.gz
-    targetFile="/tmp/${REPO}_${version}_${suffix}.tar.gz"
-    downloadFile="${REPO}_${version}_${suffix}.tar.gz"
+    downloadFile="${REPO}_${suffix}.zip"
+    targetFile="/tmp/${downloadFile}"
     printf "\nthe file to download is '%q'" "${downloadFile}"
 
     url="https://github.com/$OWNER/$REPO/releases/download/$version/${downloadFile}"
@@ -105,13 +105,13 @@ getPackage() {
         exit 1
     fi
 
-    printf "\n${DONE} download complete"
+    printf "\n${DONE} download complete\n"
 
-    # untar the file
+    # unzip the file
     cd /tmp
-    tar -zxf "${targetFile}"
+    unzip "${targetFile}"
     if [ "$?" != "0" ]; then
-        printf "\n${ERROR} untar file"
+        printf "\n${ERROR} unzip file"
         exit 1
     fi
     chmod +x "/tmp/${APP_NAME}"
@@ -158,17 +158,7 @@ getPackage() {
         if [ -e "${APP_NAME}" ]; then
             rm "/tmp/${APP_NAME}"
         fi
-
-        if [ -n "$ALIAS_NAME" ]; then
-            if [ $(which $ALIAS_NAME) ]; then
-                printf "\n${WARNING} there is already a command '$ALIAS_NAME' in the path, NOT creating the alias"
-            else
-                if [ ! -L "${BINLOCATION}/${ALIAS_NAME}" ]; then
-                    ln -s "${BINLOCATION}/${APP_NAME}" "${BINLOCATION}/${ALIAS_NAME}"
-                    printf "\n${DONE} created alias '$ALIAS_NAME' for '${BINLOCATION}/${APP_NAME}'"
-                fi
-            fi
-        fi
+        
         printf "${SUB_ACT} checking application...\n"
         ${SUCCESS_CMD}
         if [ "$?" != "0" ]; then

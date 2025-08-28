@@ -17,15 +17,54 @@ git clone https://github.com/your/repo.git
 cd raptor
 make build
 ```
-
 This will produce a binary `raptor` in the project folder.
 
-### Linux Notes
+### Using the installation script
+Use the installer script to download the latest release for your OS/CPU and place the binary on your PATH.
+```shell
+# macOS or Linux
+curl -fsSL https://raw.githubusercontent.com/mas2020-golang/raptor/main/install.sh | bash
+```
+This script:
+
+- Detects your OS/architecture
+- Downloads the latest release
+- Installs raptor into a standard location (e.g., /usr/local/bin or ~/.local/bin)
+- Makes it executable
+
+Verify
+```shell
+raptor version
+raptor help
+```
+
+### Optional dependencies (Linux clipboard)
 On Linux, clipboard features (copying secrets directly) require one of these utilities:
 - `xclip`
 - `xsel`
 
 Install them via your package manager if you want clipboard integration.
+
+### Uninstall
+Remove the binary (adjust the path if needed):
+```shell
+sudo rm -f /usr/local/bin/raptor
+# or, if installed to ~/.local/bin
+rm -f ~/.local/bin/raptor
+```
+If you have any box installed, remove it:
+```shell
+rm -rf $HOME/.cryptex/boxes
+```
+
+### Troubleshooting
+
+- `raptor`: command not found
+Ensure the install location is on your PATH. Common paths:
+   - macOS (Intel/Apple Silicon): `/usr/local/bin` or `/opt/homebrew/bin`
+   - Linux: `/usr/local/bin` or `~/.local/bin`
+- Clipboard flags don’t copy on Linux
+Install `xclip` or `xsel` (see “Optional dependencies”). 
 
 ---
 
