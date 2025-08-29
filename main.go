@@ -12,7 +12,7 @@ import (
 	"github.com/mas2020-golang/cryptex/packages/utils"
 )
 
-var GitCommit string
+var GitCommit, BuildDate string
 
 func main() {
 	// Retrieve the log level from the environment variable
@@ -25,6 +25,7 @@ func main() {
 	// set the default logger for the whole application
 	slog.SetDefault(logger)
 	utils.GitCommit = GitCommit
+	utils.BuildDate = BuildDate
 	cmd.Execute()
 }
 

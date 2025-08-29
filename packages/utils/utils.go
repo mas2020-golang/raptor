@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	Version, GitCommit string
+	Version, GitCommit, BuildDate string
 	BufferBox          *Box
 	BoxPath, BoxPwd    string
 )

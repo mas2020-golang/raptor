@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"fmt"
+
 	"github.com/mas2020-golang/cryptex/packages/utils"
+	// "github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
 )
 
@@ -11,16 +13,16 @@ func init() {
 }
 
 func NewVersionCmd() *cobra.Command {
-	// Show sub commands
 	newCmd := &cobra.Command{
-		Use: "version",
-		//Args:  cobra.ExactArgs(1),
+		Use:   "version",
 		Short: "Show the application version",
-		Long:  ``,
+		Long:  "Displays version information including Git commit and build date.",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Printf(`%-12s%s
-Git commit: %s`, "Version:", utils.Version, utils.GitCommit)
-			fmt.Println()
+			// output.ActivityBox("Application info:")
+			fmt.Printf("raptor info:\n")
+			fmt.Printf("  %-11s %s\n", "Version:", utils.Version)
+			fmt.Printf("  %-10s %s\n", "Git commit:", utils.GitCommit)
+			fmt.Printf("  %-10s %s\n", "Build date:", utils.BuildDate)
 		},
 	}
 	return newCmd
