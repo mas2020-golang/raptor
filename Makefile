@@ -11,11 +11,9 @@ goreleaser:
 	@goreleaser  release --snapshot --clean
 	@echo "done!"
 
-install-on-mac: testing
-	@echo "start installing..."
-	GOOS=darwin GOARCH=amd64 go build -ldflags "-X main.GitCommit=${GIT_COMMIT}" -o bin/raptor-darwin-amd64 main.go
+install-on-mac: testing goreleaser
 	@echo "copying into $(GOPATH)/bin..."
-	@cp bin/raptor-darwin-amd64 $(GOPATH)/bin/raptor
+	@cp dist/raptor_darwin_amd64_darwin_amd64_v1/raptor $(GOPATH)/bin/raptor
 	@echo "done!"
 
 install-on-linux: testing
