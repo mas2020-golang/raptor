@@ -1,8 +1,6 @@
 module github.com/mas2020-golang/cryptex
 
-go 1.23.0
-
-toolchain go1.23.5
+go 1.24.0
 
 require (
 	github.com/0x9ef/go-wiper v0.0.0-20211115141551-9c4041500a2a
@@ -10,7 +8,7 @@ require (
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/mas2020-golang/goutils v0.9.0
 	github.com/spf13/cobra v1.9.1
-	golang.org/x/term v0.34.0
+	golang.org/x/term v0.35.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -29,5 +27,5 @@ require (
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
-	golang.org/x/sys v0.35.0 // indirect
+	golang.org/x/sys v0.36.0 // indirect
 )
