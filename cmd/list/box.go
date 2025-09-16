@@ -60,11 +60,7 @@ func printBoxes(boxes []utils.Box) {
 }
 
 func ListBoxes(filter string) ([]utils.Box, error) {
-	folderBox, err := utils.GetFolderBox()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get box folder: %w", err)
-	}
-
+	folderBox := utils.GetFolderBox()
 	files, err := os.ReadDir(folderBox)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read directory %s: %w", folderBox, err)

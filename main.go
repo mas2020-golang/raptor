@@ -9,12 +9,15 @@ import (
 	"strings"
 
 	"github.com/mas2020-golang/cryptex/cmd"
+	"github.com/mas2020-golang/cryptex/packages/console"
 	"github.com/mas2020-golang/cryptex/packages/utils"
 )
 
 var GitCommit, BuildDate string
 
 func main() {
+	console.EnableANSI()
+
 	// Retrieve the log level from the environment variable
 	logLevel := getLogLevelFromEnv()
 

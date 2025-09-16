@@ -57,9 +57,9 @@ func create(args []string) error {
 }
 
 func createHomeFolder() error {
+	var err error
 	// get the folder box
-	boxPath, err := utils.GetFolderBox()
-	utils.Check(err, "problem to determine th folder box")
+	boxPath := utils.GetFolderBox()
 	slog.Debug("create.createHomeFolder()", "boxPath", boxPath)
 	_, err = os.Stat(boxPath)
 	if err != nil {
@@ -80,11 +80,8 @@ func createBox(name, owner string) error {
 		boxPath = name
 	}
 	// get the folder box
-	boxFolder, err := utils.GetFolderBox()
+	boxFolder := utils.GetFolderBox()
 	slog.Debug(fmt.Sprintf("boxFolder is %s", boxFolder))
-	if err != nil {
-		return fmt.Errorf("problem to determine the folder box: %v", err.Error())
-	}
 
 	b := utils.Box{
 		Name:        name,

@@ -58,9 +58,32 @@ builds:
     ldflags:
       - "-s -w -X main.GitCommit={{.ShortCommit}} -X main.BuildDate={{.Date}}"
 
+  # --- Windows builds added below ---
+
+  - id: raptor_windows_amd64
+    goos:
+      - windows
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+      # No CC on purpose: we want a pure-Go static build for Windows
+    ldflags:
+      - "-s -w -X main.GitCommit={{.ShortCommit}} -X main.BuildDate={{.Date}}"
+
+  - id: raptor_windows_arm64
+    goos:
+      - windows
+    goarch:
+      - arm64
+    env:
+      - CGO_ENABLED=0
+      # No CC on purpose: we want a pure-Go static build for Windows
+    ldflags:
+      - "-s -w -X main.GitCommit={{.ShortCommit}} -X main.BuildDate={{.Date}}"
+
 archives:
   - formats: [ 'zip' ]
-  # - format: tar.gz
     # this name template makes the OS and Arch compatible with the results of `uname`.
     name_template: >-
       {{ .ProjectName }}_

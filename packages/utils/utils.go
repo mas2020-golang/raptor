@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/mas2020-golang/cryptex/packages/security"
@@ -17,8 +19,8 @@ import (
 
 var (
 	Version, GitCommit, BuildDate string
-	BufferBox          *Box
-	BoxPath, BoxPwd    string
+	BufferBox                     *Box
+	BoxPath, BoxPwd               string
 )
 
 func init() {
@@ -168,19 +170,23 @@ func AskForPassword(text string, twice bool) (key string, err error) {
 }
 
 // getFolderBox returns the box folder
-func GetFolderBox() (string, error) {
-	// check the folder .cryptex
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return "", err
+func GetFolderBox() string {
+	if v := os.Getenv("CRYPTEX_FOLDER"); v != "" {
+		return v
 	}
-	// read the file in the home dir
-	if len(os.Getenv("CRYPTEX_FOLDER")) > 0 {
-		return os.Getenv("CRYPTEX_FOLDER"), nil
-	} else {
-		// read the file in the home dir
-		return path.Join(home, ".cryptex", "boxes"), nil
+	if dir, err := os.UserConfigDir(); err == nil && dir != "" {
+		return filepath.Join(dir, ".raptor", "boxes")
 	}
+	if runtime.GOOS == "windows" {
+		if ld := os.Getenv("LOCALAPPDATA"); ld != "" {
+			return filepath.Join(ld, ".raptor", "boxes")
+		}
+	}
+	home, _ := os.UserHomeDir()
+	if home == "" {
+		return "boxes"
+	}
+	return filepath.Join(home, ".raptor", "boxes")
 }
 
 // OpenBox opens a box
@@ -203,10 +209,7 @@ func OpenBox(boxName, pwd string) (string, string, *Box, error) {
 		}
 	}
 	// get the folder box
-	boxFolder, err := GetFolderBox()
-	if err != nil {
-		return "", "", nil, fmt.Errorf("problem to determine th folder box: %v", err)
-	}
+	boxFolder := GetFolderBox()
 
 	// read the box (if it is not assigned yet)
 	if len(BoxPath) == 0 {
