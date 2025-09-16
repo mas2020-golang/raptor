@@ -48,7 +48,7 @@ func NewPasswordCmd() *cobra.Command {
 	c.Flags().BoolVarP(&includeNumbers, "includeNumbers", "n", true, "A boolean indicating whether to include numbers (0-9)")
 	c.Flags().BoolVarP(&includeLetters, "includeLetters", "l", true, "A boolean indicating whether to include letters (a-z, A-Z)")
 	c.Flags().BoolVarP(&includeSpecial, "includeSpecial", "s", true, "A boolean indicating whether to include special characters (&*{}'\"<>!$@)")
-	c.Flags().IntVarP(&length, "length", "d", 10, "The char lenght (default 10)")
+	c.Flags().IntVarP(&length, "length", "d", 14, "The char lenght (default 14)")
 
 	return c
 }
