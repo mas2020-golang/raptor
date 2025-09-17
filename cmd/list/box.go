@@ -14,13 +14,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// // String returns a formatted string representation of the box
-// func (b utils.Box) String() string {
-// 	return
-// }
-
-//
-
 // NewListBoxCmd creates and returns a new list boxes command
 func NewListBoxCmd() *cobra.Command {
 	var filter string
@@ -43,9 +36,9 @@ using a regular expression.`,
 }
 
 func runListBoxes(filter string) error {
-	boxes, err := ListBoxes(filter)
+	_, boxes, err := ListBoxes(filter)
 	if err != nil {
-		return fmt.Errorf("error retrieving boxes: %w", err)
+		return err
 	}
 
 	printBoxes(boxes)
@@ -59,18 +52,22 @@ func printBoxes(boxes []utils.Box) {
 	}
 }
 
-func ListBoxes(filter string) ([]utils.Box, error) {
-	folderBox := utils.GetFolderBox()
+func ListBoxes(filter string) (string, []utils.Box, error) {
+	folderBox, err := utils.InitFolderBox()
+	if err != nil {
+		return folderBox, nil, err
+	}
+
 	files, err := os.ReadDir(folderBox)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read directory %s: %w", folderBox, err)
+		return folderBox, nil, fmt.Errorf("failed to read directory %s: %w", folderBox, err)
 	}
 
 	var filterRegex *regexp.Regexp
 	if filter != "" {
 		filterRegex, err = regexp.Compile(filter)
 		if err != nil {
-			return nil, fmt.Errorf("invalid regex pattern '%s': %w", filter, err)
+			return folderBox, nil, fmt.Errorf("invalid regex pattern '%s': %w", filter, err)
 		}
 	}
 
@@ -79,13 +76,13 @@ func ListBoxes(filter string) ([]utils.Box, error) {
 		if shouldIncludeFile(file, filterRegex) {
 			box, err := createBoxFromFile(file)
 			if err != nil {
-				return nil, fmt.Errorf("failed to process file %s: %w", file.Name(), err)
+				return folderBox, nil, fmt.Errorf("failed to process file %s: %w", file.Name(), err)
 			}
 			boxes = append(boxes, box)
 		}
 	}
 
-	return boxes, nil
+	return folderBox, boxes, nil
 }
 
 func shouldIncludeFile(file fs.DirEntry, filterRegex *regexp.Regexp) bool {

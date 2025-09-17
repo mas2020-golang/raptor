@@ -8,11 +8,11 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
-	"os/exec"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/mas2020-golang/cryptex/packages/ui"
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
@@ -123,13 +123,13 @@ func interactiveOpen(boxName string) error {
 
 			switch input {
 			case "clear", "cl", "wipe", "clean":
-				clearScreen()
+				ui.ClearScreen()
 				doneChan <- true // Signal that processing is complete
 				continue
 			}
 
 			// fetch the command
-			clearScreen()
+			ui.ClearScreen()
 			os.Args = []string{"raptor"}
 			os.Args = append(os.Args, strings.Split(input, " ")...)
 			slog.Debug("executing the command", "args", os.Args)
@@ -140,10 +140,4 @@ func interactiveOpen(boxName string) error {
 			return nil
 		}
 	}
-}
-
-func clearScreen() {
-	cmd := exec.Command("clear")
-	cmd.Stdout = os.Stdout
-	cmd.Run()
 }
