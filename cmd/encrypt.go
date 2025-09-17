@@ -35,7 +35,7 @@ each file in in the path.`,
 					console.Error(err.Error(), true)
 				}
 			} else {
-				console.ActivityDone("Encryption succeded")
+				console.OK("Encryption succeded")
 			}
 		},
 	}

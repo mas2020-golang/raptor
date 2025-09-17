@@ -4,17 +4,27 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package main
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/mas2020-golang/cryptex/cmd"
+	"github.com/mas2020-golang/cryptex/packages/console"
 	"github.com/mas2020-golang/cryptex/packages/utils"
 )
 
 var GitCommit, BuildDate string
 
 func main() {
+
+	if len(os.Args) > 1 && os.Args[1] == "version" {
+		start := time.Now()
+		defer func() { fmt.Fprintf(os.Stderr, "\n[startup] app init took %v\n", time.Since(start)) }()
+	}
+	console.EnableANSI()
+
 	// Retrieve the log level from the environment variable
 	logLevel := getLogLevelFromEnv()
 

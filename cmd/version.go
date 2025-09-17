@@ -19,7 +19,15 @@ func NewVersionCmd() *cobra.Command {
 		Long:  "Displays version information including Git commit and build date.",
 		Run: func(cmd *cobra.Command, args []string) {
 			// output.ActivityBox("Application info:")
-			fmt.Printf("raptor info:\n")
+			const banner = `
+#####   ###   #####  ######  #####  ##### 
+#    # #   #  #    #    #    #    # #    #
+#####  #####  #####     #    #    # #####
+#   #  #   #  #         #    #    # #   #
+#    # #   #  #         #     ##### #    #
+
+`
+			fmt.Print(banner)
 			fmt.Printf("  %-11s %s\n", "Version:", utils.Version)
 			fmt.Printf("  %-10s %s\n", "Git commit:", utils.GitCommit)
 			fmt.Printf("  %-10s %s\n", "Build date:", utils.BuildDate)

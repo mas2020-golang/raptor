@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"path/filepath"
+	"runtime"
 	"strings"
 
 	"github.com/mas2020-golang/cryptex/packages/security"
@@ -17,8 +19,8 @@ import (
 
 var (
 	Version, GitCommit, BuildDate string
-	BufferBox          *Box
-	BoxPath, BoxPwd    string
+	BufferBox                     *Box
+	BoxPath, BoxPwd               string
 )
 
 func init() {
@@ -167,20 +169,56 @@ func AskForPassword(text string, twice bool) (key string, err error) {
 	return key, nil
 }
 
-// getFolderBox returns the box folder
-func GetFolderBox() (string, error) {
-	// check the folder .cryptex
-	home, err := os.UserHomeDir()
+// GetFolderBox returns the default folder where boxes are stored.
+// Precedence:
+// 1. CRYPTEX_FOLDER env var
+// 2. OS-specific config directory + "raptor/boxes"
+// 3. LOCALAPPDATA (Windows only) + "raptor/boxes"
+// 4. HOME + ".raptor/boxes"
+// 5. Relative "boxes" folder
+func getFolderBox() string {
+	if v := os.Getenv("CRYPTEX_FOLDER"); v != "" {
+		return v
+	}
+
+	// 2. OS-aware config dir
+	if dir, err := os.UserConfigDir(); err == nil && dir != "" {
+		return filepath.Join(dir, "raptor", "boxes")
+	}
+
+	// 3. Explicit Windows fallback
+	if runtime.GOOS == "windows" {
+		if ld := os.Getenv("LOCALAPPDATA"); ld != "" {
+			return filepath.Join(ld, "raptor", "boxes")
+		}
+	}
+
+	// 4. Home fallback
+	if home, err := os.UserHomeDir(); err == nil && home != "" {
+		return filepath.Join(home, ".raptor", "boxes")
+	}
+
+	// 5. Last-resort relative path
+	return "boxes"
+}
+
+// InitFolderBox ensures the box folder exists on the target system.
+// It uses GetFolderBox() to resolve the path, then creates the directory
+// (and its parents) if they don't exist. It returns the absolute path.
+func InitFolderBox() (string, error) {
+	path := getFolderBox()
+
+	abs, err := filepath.Abs(path)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to resolve absolute path for box folder: %w", err)
 	}
-	// read the file in the home dir
-	if len(os.Getenv("CRYPTEX_FOLDER")) > 0 {
-		return os.Getenv("CRYPTEX_FOLDER"), nil
-	} else {
-		// read the file in the home dir
-		return path.Join(home, ".cryptex", "boxes"), nil
+
+	// MkdirAll is idempotent: does nothing if the folder already exists.
+	if err := os.MkdirAll(abs, 0o755); err != nil {
+		return "", fmt.Errorf("failed to create box folder %q: %w", abs, err)
 	}
+
+	return abs, nil
 }
 
 // OpenBox opens a box
@@ -202,10 +240,11 @@ func OpenBox(boxName, pwd string) (string, string, *Box, error) {
 			return "", "", nil, fmt.Errorf("--box args is not given and the env var CRYPTEX_BOX is empty")
 		}
 	}
+
 	// get the folder box
-	boxFolder, err := GetFolderBox()
+	boxFolder, err := InitFolderBox()
 	if err != nil {
-		return "", "", nil, fmt.Errorf("problem to determine th folder box: %v", err)
+		return "", "", nil, err
 	}
 
 	// read the box (if it is not assigned yet)

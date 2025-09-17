@@ -22,7 +22,7 @@ var (
 			Border(lipgloss.RoundedBorder()).
 			BorderForeground(lipgloss.Color("62")).
 			PaddingTop(0).
-			PaddingBottom(0).
+			PaddingBottom(1).
 			PaddingLeft(2).
 			PaddingRight(2)
 		//Margin(1)
@@ -99,8 +99,8 @@ type EnvVar struct {
 func DisplayEnvironmentInfo() {
 	// Define your environment variables
 	envVars := []EnvVar{
-		{"CRYPTEX_FOLDER", "Cryptex folder path", true},
-		{"CRYPTEX_BOX", "Cryptex box configuration", true},
+		{"CRYPTEX_FOLDER", "Cryptex folder path", false},
+		{"CRYPTEX_BOX", "Cryptex box configuration", false},
 		{"RAPTOR_LOGLEVEL", "Logging level for Raptor", false},
 		{"RAPTOR_TIMEOUT_SEC", "Timeout in seconds for Raptor", false},
 	}
@@ -176,7 +176,7 @@ func DisplayEnvironmentInfo() {
 	boxSection := sectionStyle.Render("Boxes")
 	content.WriteString(boxSection + "\n")
 
-	boxes, err := getBoxes()
+	folderBox, boxes, err := getBoxes()
 	renderedBoxes := ""
 	if err != nil {
 		renderedBoxes = err.Error()
@@ -191,7 +191,7 @@ func DisplayEnvironmentInfo() {
 	)
 	// content.WriteString(statusLine + "\n")
 	content.WriteString(boxesLine)
-
+	content.WriteString("\nsearched in " + folderBox)
 	// Wrap everything in the container
 	final := containerStyle.Render(content.String())
 	fmt.Println(final)
@@ -216,7 +216,7 @@ func getLogLevelEmoji(level string) string {
 }
 
 // Helper function to determine configuration status
-func getBoxes() ([]utils.Box, error) {
+func getBoxes() (string, []utils.Box, error) {
 	return list.ListBoxes("")
 }
 
