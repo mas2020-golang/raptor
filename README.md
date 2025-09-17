@@ -1,4 +1,4 @@
-# Raptor
+# Raptor <!-- omit in toc -->
 
 Raptor is a cross-platform CLI application for managing your secrets in a fast and smart way.  
 It lets you **encrypt and decrypt files or folders** and manage **encrypted boxes** (JSON-based containers) where you can safely store credentials, tokens, and other sensitive data.  
@@ -6,10 +6,34 @@ It lets you **encrypt and decrypt files or folders** and manage **encrypted boxe
 Raptor is designed to be simple, portable, and secure — working on macOS, Linux, and Windows.
 
 ---
+- [Installing Raptor](#installing-raptor)
+  - [From Source (for Linux and Mac users)](#from-source-for-linux-and-mac-users)
+  - [macOS / Linux](#macos--linux)
+  - [Optional dependencies (Linux clipboard)](#optional-dependencies-linux-clipboard)
+  - [Windows (PowerShell)](#windows-powershell)
+  - [Uninstall on macOS/Linux](#uninstall-on-macoslinux)
+  - [Uninstall on Windows](#uninstall-on-windows)
+  - [Troubleshooting](#troubleshooting)
+- [Command Reference](#command-reference)
+- [Typical Workflow](#typical-workflow)
+- [Usage Examples](#usage-examples)
+  - [Encrypt a File](#encrypt-a-file)
+  - [Decrypt a File](#decrypt-a-file)
+  - [Create a Box](#create-a-box)
+  - [Add a Secret to a Box](#add-a-secret-to-a-box)
+  - [Generate a Random Password](#generate-a-random-password)
+  - [List Secrets in a Box](#list-secrets-in-a-box)
+  - [Get a Secret and Copy to Clipboard](#get-a-secret-and-copy-to-clipboard)
+  - [Edit a Secret](#edit-a-secret)
+- [Environment Variables](#environment-variables)
+- [How It Works](#how-it-works)
+- [Development](#development)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Installing Raptor
 
-### From Source
+### From Source (for Linux and Mac users)
 You need Go 1.21 or later.
 
 ```bash
@@ -19,7 +43,7 @@ make build
 ```
 This will produce a binary `raptor` in the project folder.
 
-### Using the installation script
+### macOS / Linux
 Use the installer script to download the latest release for your OS/CPU and place the binary on your PATH.
 ```shell
 # macOS or Linux
@@ -45,7 +69,12 @@ On Linux, clipboard features (copying secrets directly) require one of these uti
 
 Install them via your package manager if you want clipboard integration.
 
-### Uninstall
+### Windows (PowerShell)
+```shell
+iwr -UseBasicParsing https://raw.githubusercontent.com/mas2020-golang/raptor/main/install.ps1 | iex
+```
+
+### Uninstall on macOS/Linux
 Remove the binary (adjust the path if needed):
 ```shell
 sudo rm -f /usr/local/bin/raptor
@@ -56,6 +85,12 @@ If you have any box installed, remove it:
 ```shell
 rm -rf $HOME/.cryptex/boxes
 ```
+
+### Uninstall on Windows
+Remove the binary (adjust the path if needed):
+
+- delete `%LOCALAPPDATA%\Programs\raptor\raptor.exe`
+- optionally remove `%LOCALAPPDATA%\Programs\raptor` from your User PATH.
 
 ### Troubleshooting
 
