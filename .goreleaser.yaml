@@ -35,8 +35,8 @@ builds:
       - "-s -w -X main.GitCommit={{.ShortCommit}} -X main.BuildDate={{.Date}}"
 
  # --- Windows REAL app (raptor-real.exe) ---
-  - id: raptor_windows_real
-    binary: raptor-real
+  - id: raptor_windows
+    binary: raptor
     goos: [ windows ]
     goarch: [ amd64, arm64 ]
     env:
@@ -44,23 +44,10 @@ builds:
     ldflags:
       - "-s -w -X main.GitCommit={{.ShortCommit}} -X main.BuildDate={{.Date}}"
 
-  # --- Windows LOADER (raptor.exe) ---
-  - id: raptor_windows_loader
-    main: ./cmd/windows-loader
-    binary: raptor
-    goos: [ windows ]
-    goarch: [ amd64, arm64 ]
-    env:
-      - CGO_ENABLED=0
-    ldflags:
-      - "-s -w"
-
 archives:
   # --- Windows ZIPs: include BOTH binaries per arch (loader + real) ---
   - id: windows
-    builds:
-      - raptor_windows_real
-      - raptor_windows_loader
+    ids: [raptor_windows]
     formats: [ 'zip' ]
     name_template: >-
       {{ .ProjectName }}_
@@ -75,11 +62,7 @@ archives:
 
   # --- Unix ZIPs: single binary per target as usual ---
   - id: unix
-    builds:
-      - raptor_linux_amd64
-      - raptor_linux_arm64
-      - raptor_darwin_amd64
-      - raptor_darwin_arm64
+    ids: [raptor_linux_amd64,raptor_linux_arm64,raptor_darwin_amd64,raptor_darwin_arm64]
     formats: [ 'zip' ]
     name_template: >-
       {{ .ProjectName }}_

@@ -25,23 +25,10 @@
   Prints a tiny README-friendly one-liner that downloads and runs this script.
 
 .EXAMPLES
-  # Install latest:
   powershell -ExecutionPolicy Bypass -File .\install.ps1
-
-  # Install specific version:
   powershell -ExecutionPolicy Bypass -File .\install.ps1 -Version v0.3.1
-
-  # Custom directory + overwrite:
   powershell -ExecutionPolicy Bypass -File .\install.ps1 -InstallDir "C:\Tools\raptor" -Force
-
-  # Print tiny loader (copy for README):
   powershell -ExecutionPolicy Bypass -File .\install.ps1 -PrintTinyLoader
-
-.NOTES
-  Repo: https://github.com/mas2020-golang/raptor
-  Artifacts expected (GoReleaser name_template):
-    raptor_Windows_x86_64.zip
-    raptor_Windows_arm64.zip
 #>
 
 [CmdletBinding()]
@@ -66,8 +53,9 @@ function Write-Err($msg)  { Write-Host "[ERR ] $msg" -ForegroundColor Red }
 function Get-Arch {
   # Normalize to our artifact naming
   # amd64 => x86_64 in asset name; arm64 => arm64
-  $arch = ($env:PROCESSOR_ARCHITECTURE, $env:PROCESSOR_ARCHITEW6432 | Where-Object { $_ })[0]
-  switch ($arch.ToLower()) {
+  $arch = $env:PROCESSOR_ARCHITECTURE
+  if (-not $arch -and $env:PROCESSOR_ARCHITEW6432) { $arch = $env:PROCESSOR_ARCHITEW6432 }
+  switch (($arch | ForEach-Object { "$_".ToLower() })) {
     "amd64" { return "amd64" }
     "arm64" { return "arm64" }
     default { return "amd64" } # safe default
@@ -95,7 +83,7 @@ function Ensure-UserPathContains($dir) {
     Write-Info "Added to user PATH: $dir"
     Write-Warn "Open a new terminal (or sign out/in) for PATH changes to take effect."
   }
-  # Also add to current process so user can run raptor immediately in this session
+  # also add to current process
   if (-not ($env:Path -split ";" | Where-Object { $_ -eq $dir })) {
     $env:Path = "$env:Path;$dir"
   }
@@ -120,12 +108,15 @@ function Find-RaptorExe($root) {
 }
 
 function Print-TinyLoader {
-  # One-liner that fetches this script from your repo and executes it in-memory.
-  # Paste this block into README.
-  $raw = "https://raw.githubusercontent.com/mas2020-golang/raptor/main/install.ps1"
+  # Use the GitHub API with Accept: raw so we always get the script body (avoids HTML/JS pages).
+  $api = "https://api.github.com/repos/mas2020-golang/raptor/contents/install.ps1?ref=main"
   $loader = @"
 # Windows (PowerShell) — install latest Raptor (no admin needed)
-iwr -UseBasicParsing $raw | iex
+`$u='$api'
+`$p="$env:TEMP\raptor-install-$([guid]::NewGuid().ToString('N')).ps1"
+iwr `$u -Headers @{ 'User-Agent'='raptor-installer'; 'Accept'='application/vnd.github.v3.raw' } -UseBasicParsing -OutFile `$p
+Unblock-File `$p
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File `$p
 "@
   $loader
 }
@@ -142,16 +133,25 @@ $repo = "mas2020-golang/raptor"
 $apiBase = "https://api.github.com/repos/$repo/releases"
 $headers = @{ "User-Agent" = "raptor-installer" }
 
-$target = if ([string]::IsNullOrWhiteSpace($Version)) { "$apiBase/latest" } else { "$apiBase/tags/$Version" }
+# --- PS5-safe target selection (no "if-as-expression") ---
+if ([string]::IsNullOrWhiteSpace($Version)) {
+  $target = "$apiBase/latest"
+} else {
+  $target = "$apiBase/tags/$Version"
+}
 
 Write-Info "Target repo: $repo"
-Write-Info ("Version: " + (if ($Version) { $Version } else { "latest" }))
+
+# PS5-safe version label
+$verLabel = $Version
+if ([string]::IsNullOrWhiteSpace($verLabel)) { $verLabel = "latest" }
+Write-Info ("Version: " + $verLabel)
 
 # Query release JSON
 try {
   $release = Invoke-RestMethod -Uri $target -Headers $headers
 } catch {
-  if ($Version) {
+  if (-not [string]::IsNullOrWhiteSpace($Version)) {
     throw "Unable to fetch release '$Version' from GitHub. $($_.Exception.Message)"
   } else {
     throw "Unable to fetch the latest release from GitHub. $($_.Exception.Message)"
@@ -170,7 +170,7 @@ $expected = "raptor_Windows_${nameArch}.zip"
 $asset = $release.assets | Where-Object { $_.name -eq $expected } | Select-Object -First 1
 if (-not $asset) {
   # Be a little forgiving if case varies
-  $asset = $release.assets | Where-Object { $_.name -match "(?i)^raptor[_-]windows[_-](${nameArch})\.zip$" } | Select-Object -First 1
+  $asset = $release.assets | Where-Object { $_.name -match ("(?i)^raptor[_-]windows[_-](" + [regex]::Escape($nameArch) + ")\.zip$") } | Select-Object -First 1
 }
 if (-not $asset) {
   # Final fallback: any windows zip (useful if naming ever changes)
