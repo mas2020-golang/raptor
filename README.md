@@ -71,6 +71,7 @@ Install them via your package manager if you want clipboard integration.
 
 ### Windows (PowerShell)
 ```shell
+Remove-Item "$env:LOCALAPPDATA\Programs\raptor\raptor.exe" -Force
 iwr -UseBasicParsing https://raw.githubusercontent.com/mas2020-golang/raptor/main/install.ps1 | iex
 ```
 
@@ -107,17 +108,17 @@ Install `xclip` or `xsel` (see “Optional dependencies”).
 
 | Command | Description |
 |---------|-------------|
-| `raptor encrypt --in FILE --out FILE` | Encrypt a file |
-| `raptor decrypt --in FILE --out FILE` | Decrypt a file |
+| `raptor encrypt FILE` | Encrypt a file |
+| `raptor decrypt FILE.enc` | Decrypt a file |
 | `raptor create box --name NAME` | Create a new box |
-| `raptor create secret --box NAME --name KEY --value VAL` | Add a secret to a box |
-| `raptor create password [--length N] [--symbols]` | Generate a random password |
+| `raptor create secret --box NAME --name KEY` | Add a secret to a box |
+| `raptor create password [--length N]` | Generate a random password |
 | `raptor list box` | List all existing boxes |
 | `raptor list secret --box NAME` | List secrets in a box |
-| `raptor get secret --box NAME --name KEY [--clip]` | Retrieve a secret (optionally copy to clipboard) |
+| `raptor get secret --box NAME --name KEY` | Retrieve a secret (optionally copy to clipboard) |
 | `raptor edit secret --box NAME --name KEY` | Edit a secret in the default editor |
-| `raptor print box --box NAME` | Print all secrets in a box |
-| `raptor open --box NAME` | Open a box and keep it active until timeout |
+| `raptor print secret NAME --box NAME` | Print all secrets in a box |
+| `raptor open NAME` | Open a box and keep it active until timeout |
 | `raptor version` | Show Raptor version info |
 
 Run `raptor help <command>` for full details on options.
@@ -130,18 +131,18 @@ Here’s a quick journey through Raptor’s main features:
 
 1. **Encrypt a file you want to protect**  
    ```bash
-   raptor encrypt --in secrets.env --out secrets.env.enc
+   raptor encrypt secrets.env
    ```
 
 2. **Create a box to organize secrets**  
    ```bash
-   raptor create box --name my-box
+   raptor create box my-box
    ```
 
 3. **Add secrets into the box**  
    ```bash
-   raptor create secret --box my-box --name DB_PASSWORD --value "SuperSecret123"
-   raptor create secret --box my-box --name API_KEY --value "sk_live_abc123"
+   raptor create secret --box my-box DB_PASSWORD
+   raptor create secret --box my-box EMAIL_PASSWORD
    ```
 
 4. **List the secrets in your box**  
@@ -151,17 +152,17 @@ Here’s a quick journey through Raptor’s main features:
 
 5. **Retrieve a secret safely**  
    ```bash
-   raptor get secret --box my-box --name API_KEY --clip
+   raptor get secret --box my-box API_KEY
    ```
 
 6. **Edit or update a secret when it changes**  
    ```bash
-   raptor edit secret --box my-box --name DB_PASSWORD
+   raptor edit secret --box my-box DB_PASSWORD
    ```
 
 7. **Print or open a box when you need to work interactively**  
    ```bash
-   raptor open --box my-box
+   raptor open my-box
    ```
 
 This flow covers the most common tasks: protecting files, creating secure containers, and handling credentials.
@@ -172,42 +173,43 @@ This flow covers the most common tasks: protecting files, creating secure contai
 
 ### Encrypt a File
 ```bash
-raptor encrypt --in secrets.env --out secrets.env.enc
+raptor encrypt secrets.env
 ```
 
 ### Decrypt a File
 ```bash
-raptor decrypt --in secrets.env.enc --out secrets.env
+raptor decrypt secrets.env.enc
 ```
 
 ### Create a Box
 ```bash
-raptor create box --name my-box
+raptor create box my-box
 ```
 
 ### Add a Secret to a Box
 ```bash
-raptor create secret --box my-box --name API_KEY --value "sk_live_xxx"
+raptor create secret --box my-box API_KEY
 ```
 
 ### Generate a Random Password
 ```bash
-raptor create password --length 32 --symbols
+raptor create password --length 16
 ```
 
 ### List Secrets in a Box
 ```bash
 raptor list secret --box my-box
+raptor secret ls --box test --name '^secret.*test$
 ```
 
 ### Get a Secret and Copy to Clipboard
 ```bash
-raptor get secret --box my-box --name API_KEY --clip
+raptor get secret --box my-box API_KEY
 ```
 
 ### Edit a Secret
 ```bash
-raptor edit secret --box my-box --name API_KEY
+raptor edit secret --box my-box API_KEY
 ```
 
 ---

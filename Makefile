@@ -28,7 +28,7 @@ run:
 	go run main.go
 
 build:
-	# compile Go-AL for several platform
+	# compiling for several platform
 	@echo "compiling for every OS and Platform..."
 	CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 go build -ldflags "-X main.GitCommit=${GIT_COMMIT}" -o bin/raptor-darwin-amd64 main.go
 	CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -ldflags "-X main.GitCommit=${GIT_COMMIT}" -o bin/raptor-linux-amd64 main.go
