@@ -42,6 +42,7 @@ func init() {
 	rootCmd.AddCommand(newListCmd())
 	rootCmd.AddCommand(newEditCmd())
 	rootCmd.AddCommand(newGetCmd())
+	rootCmd.AddCommand(newNavCmd())
 	rootCmd.AddCommand(newPrintCmd())
 	rootCmd.AddCommand(newOpenCmd())
 	rootCmd.AddCommand(newEncryptCmd())

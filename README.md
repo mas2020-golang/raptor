@@ -25,6 +25,7 @@ Raptor is designed to be simple, portable, and secure — working on macOS, Linu
   - [List Secrets in a Box](#list-secrets-in-a-box)
   - [Get a Secret and Copy to Clipboard](#get-a-secret-and-copy-to-clipboard)
   - [Edit a Secret](#edit-a-secret)
+  - [Open the browser connecting to the secret URL](#open-the-browser-connecting-to-the-secret-url)
 - [Environment Variables](#environment-variables)
 - [How It Works](#how-it-works)
 - [Development](#development)
@@ -152,7 +153,7 @@ Here’s a quick journey through Raptor’s main features:
 
 5. **Retrieve a secret safely**  
    ```bash
-   raptor get secret --box my-box API_KEY
+   raptor get --box my-box API_KEY
    ```
 
 6. **Edit or update a secret when it changes**  
@@ -163,6 +164,11 @@ Here’s a quick journey through Raptor’s main features:
 7. **Print or open a box when you need to work interactively**  
    ```bash
    raptor open my-box
+   ```
+
+8. **Open the browser connecting to the secret URL and copy into the clipboard the related secret **  
+   ```bash
+   raptor nav --box my-box openai
    ```
 
 This flow covers the most common tasks: protecting files, creating secure containers, and handling credentials.
@@ -204,7 +210,7 @@ raptor secret ls --box test --name '^secret.*test$
 
 ### Get a Secret and Copy to Clipboard
 ```bash
-raptor get secret --box my-box API_KEY
+raptor get --box my-box API_KEY
 ```
 
 ### Edit a Secret
@@ -212,6 +218,10 @@ raptor get secret --box my-box API_KEY
 raptor edit secret --box my-box API_KEY
 ```
 
+### Open the browser connecting to the secret URL  
+```bash
+raptor nav --box my-box openai
+```
 ---
 
 ## Environment Variables
