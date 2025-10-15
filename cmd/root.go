@@ -21,7 +21,6 @@ only to you.
 
 Features:
     - Strong Encryption: Utilizes AES (Advanced Encryption Standard) for encrypting your data, ensuring high levels of security.
-    slingacademy.com
 
     - Password Protection: Access your encrypted box using a password, providing an additional layer of security.
 
