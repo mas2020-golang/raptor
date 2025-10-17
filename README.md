@@ -70,13 +70,14 @@ On Linux, clipboard features (copying secrets directly) require one of these uti
 Install them via your package manager if you want clipboard integration.
 
 ### Windows (PowerShell)
-If you are running through a proxy you can type:
+If you are running through a proxy you can type (set the proxy variable accordingly):
 ```shell
+Remove-Item "$env:LOCALAPPDATA\Programs\raptor\raptor.exe" -Force
 # Build your PSCredential (try DOMAIN\user or UPN)
 $cred  = New-Object pscredential('post\genovesia', (Read-Host -AsSecureString 'Proxy password'))
 
 # Use the exact proxy you tested earlier
-$proxy = 'http://proxy.mycorp.tld:8080'
+$proxy = 'http://SET-PROXY-ADDRESS'
 
 # Run the installer
 .\install.ps1 -Proxy $proxy -ProxyCredential $cred -Force
