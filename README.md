@@ -70,6 +70,19 @@ On Linux, clipboard features (copying secrets directly) require one of these uti
 Install them via your package manager if you want clipboard integration.
 
 ### Windows (PowerShell)
+If you are running through a proxy you can type:
+```shell
+# Build your PSCredential (try DOMAIN\user or UPN)
+$cred  = New-Object pscredential('post\genovesia', (Read-Host -AsSecureString 'Proxy password'))
+
+# Use the exact proxy you tested earlier
+$proxy = 'http://proxy.mycorp.tld:8080'
+
+# Run the installer
+.\install.ps1 -Proxy $proxy -ProxyCredential $cred -Force
+```
+
+In case you have a direct connection you can type:
 ```shell
 Remove-Item "$env:LOCALAPPDATA\Programs\raptor\raptor.exe" -Force
 iwr -UseBasicParsing https://raw.githubusercontent.com/mas2020-golang/raptor/main/install.ps1 | iex
