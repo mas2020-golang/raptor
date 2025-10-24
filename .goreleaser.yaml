@@ -44,6 +44,26 @@ builds:
     ldflags:
       - "-s -w -X main.GitCommit={{.ShortCommit}} -X main.BuildDate={{.Date}}"
 
+  - id: raptor_darwin_amd64
+    goos:
+      - darwin
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - "-s -w -X main.GitCommit={{.ShortCommit}} -X main.BuildDate={{.Date}}"
+
+  - id: raptor_darwin_arm64
+    goos:
+      - darwin
+    goarch:
+      - arm64
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - "-s -w -X main.GitCommit={{.ShortCommit}} -X main.BuildDate={{.Date}}"
+
 archives:
   # --- Windows ZIPs: include BOTH binaries per arch (loader + real) ---
   - id: windows
