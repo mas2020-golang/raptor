@@ -9,7 +9,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var verbose bool
+var (
+	verbose    bool
+	createCmd  *cobra.Command
+	listCmd    *cobra.Command
+	getCmd     *cobra.Command
+	editCmd    *cobra.Command
+	printCmd   *cobra.Command
+	openCmd    *cobra.Command
+	encryptCmd *cobra.Command
+	decryptCmd *cobra.Command
+	infoCmd    *cobra.Command
+)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -38,15 +49,37 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.AddCommand(newCreateCmd())
-	rootCmd.AddCommand(newListCmd())
-	rootCmd.AddCommand(newEditCmd())
-	rootCmd.AddCommand(newGetCmd())
-	rootCmd.AddCommand(newPrintCmd())
-	rootCmd.AddCommand(newOpenCmd())
-	rootCmd.AddCommand(newEncryptCmd())
-	rootCmd.AddCommand(newDecryptCmd())
-	rootCmd.AddCommand(newInfoCmd())
+	rootCmd.AddGroup(&cobra.Group{ID: "boxes", Title: "Box Management"})
+	rootCmd.AddGroup(&cobra.Group{ID: "encryption", Title: "Secret Operations"})
+
+	createCmd = newCreateCmd()
+	listCmd = newListCmd()
+	getCmd = newGetCmd()
+	editCmd = newEditCmd()
+	printCmd = newPrintCmd()
+	openCmd = newOpenCmd()
+	encryptCmd = newEncryptCmd()
+	decryptCmd = newDecryptCmd()
+	infoCmd = newInfoCmd()
+	
+	listCmd.GroupID = "boxes"
+	createCmd.GroupID = "boxes"
+	getCmd.GroupID = "boxes"
+	editCmd.GroupID = "boxes"
+	openCmd.GroupID = "boxes"
+	printCmd.GroupID = "boxes"
+	encryptCmd.GroupID = "encryption"
+	decryptCmd.GroupID = "encryption"
+
+	rootCmd.AddCommand(createCmd)
+	rootCmd.AddCommand(listCmd)
+	rootCmd.AddCommand(getCmd)
+	rootCmd.AddCommand(editCmd)
+	rootCmd.AddCommand(printCmd)
+	rootCmd.AddCommand(openCmd)
+	rootCmd.AddCommand(encryptCmd)
+	rootCmd.AddCommand(decryptCmd)
+	rootCmd.AddCommand(infoCmd)
 
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Give more information about the command execution")
 }
