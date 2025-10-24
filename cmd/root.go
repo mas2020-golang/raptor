@@ -20,6 +20,7 @@ var (
 	encryptCmd *cobra.Command
 	decryptCmd *cobra.Command
 	infoCmd    *cobra.Command
+	navCmd     *cobra.Command
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -60,13 +61,15 @@ func init() {
 	encryptCmd = newEncryptCmd()
 	decryptCmd = newDecryptCmd()
 	infoCmd = newInfoCmd()
-	
+	navCmd = newNavCmd()
+
 	listCmd.GroupID = "boxes"
 	createCmd.GroupID = "boxes"
 	getCmd.GroupID = "boxes"
 	editCmd.GroupID = "boxes"
 	openCmd.GroupID = "boxes"
 	printCmd.GroupID = "boxes"
+	navCmd.GroupID = "boxes"
 	encryptCmd.GroupID = "encryption"
 	decryptCmd.GroupID = "encryption"
 
@@ -79,6 +82,7 @@ func init() {
 	rootCmd.AddCommand(encryptCmd)
 	rootCmd.AddCommand(decryptCmd)
 	rootCmd.AddCommand(infoCmd)
+	rootCmd.AddCommand(navCmd)
 
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Give more information about the command execution")
 }
