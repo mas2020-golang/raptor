@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.4.0](https://github.com/mas2020-golang/raptor/releases/tag/v0.4.0) - 2025-xx-xx
 
 ### Added
-- Add `nav` command to open secret URLs and copy passwords to the clipboard
+- add `nav` command to open secret URLs and copy passwords to the clipboard (#93)
+- the commands are grouped into categories (#124)
 
 ### Changed
 - change the default pwd lenght for the `create password` cmd to 14 (#111)
