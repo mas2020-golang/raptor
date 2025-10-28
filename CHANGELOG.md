@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - refactor secret lookup to reuse shared helper across commands
 - The `get secret` command has been replaced by `get` command
 
+### Fixed
+- prevent secret edit from exiting when the target secret is missing (#93)
+
 ## [0.2.0](https://github.com/mas2020-golang/raptor/releases/tag/v0.2.0) - 2024-02-12
 
 ### Added
