@@ -7,7 +7,7 @@ import (
 	"runtime"
 
 	"github.com/atotto/clipboard"
-	"github.com/mas2020-golang/cryptex/cmd/internal/secretutil"
+	"github.com/mas2020-golang/cryptex/internal/secretutil"
 	"github.com/mas2020-golang/cryptex/packages/utils"
 	"github.com/mas2020-golang/goutils/output"
 	"github.com/spf13/cobra"
