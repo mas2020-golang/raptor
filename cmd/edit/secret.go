@@ -43,7 +43,10 @@ func edit(name string) {
 	utils.Check(err, "")
 	// add the secret
 	err = editSecret(name, box, boxPath)
-	utils.Check(err, "")
+	if err != nil {
+		output.Error("", err.Error())
+		return
+	}
 	fmt.Println()
 	// save the box
 	err = utils.SaveBox(boxPath, key, box)
