@@ -15,6 +15,7 @@ var (
 	listCmd    *cobra.Command
 	getCmd     *cobra.Command
 	editCmd    *cobra.Command
+	deleteCmd  *cobra.Command
 	printCmd   *cobra.Command
 	openCmd    *cobra.Command
 	encryptCmd *cobra.Command
@@ -56,6 +57,7 @@ func init() {
 	listCmd = newListCmd()
 	getCmd = newGetCmd()
 	editCmd = newEditCmd()
+	deleteCmd = newDeleteCmd()
 	printCmd = newPrintCmd()
 	openCmd = newOpenCmd()
 	encryptCmd = newEncryptCmd()
@@ -67,6 +69,7 @@ func init() {
 	createCmd.GroupID = "boxes"
 	getCmd.GroupID = "boxes"
 	editCmd.GroupID = "boxes"
+	deleteCmd.GroupID = "boxes"
 	openCmd.GroupID = "boxes"
 	printCmd.GroupID = "boxes"
 	navCmd.GroupID = "boxes"
@@ -77,6 +80,7 @@ func init() {
 	rootCmd.AddCommand(listCmd)
 	rootCmd.AddCommand(getCmd)
 	rootCmd.AddCommand(editCmd)
+	rootCmd.AddCommand(deleteCmd)
 	rootCmd.AddCommand(printCmd)
 	rootCmd.AddCommand(openCmd)
 	rootCmd.AddCommand(encryptCmd)

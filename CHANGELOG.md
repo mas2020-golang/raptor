@@ -4,14 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.4.0](https://github.com/mas2020-golang/raptor/releases/tag/v0.4.0) - 2025-xx-xx
+## [0.5.0](https://github.com/mas2020-golang/raptor/releases/tag/v0.5.0) - 2025-xx-xx
 
 ### Added
-- add `nav` command to open secret URLs and copy passwords to the clipboard (#93)
-- the commands are grouped into categories (#124)
+- add `delete` add delete command to remove secrets from boxes [#125](https://github.com/mas2020-golang/raptor/issues/125)
+
+## [0.4.0](https://github.com/mas2020-golang/raptor/releases/tag/v0.4.0) - 2025-10-28
+
+### Added
+- add `nav` command to open secret URLs and copy passwords to the clipboard [#93](https://github.com/mas2020-golang/raptor/issues/93)
+- the commands are grouped into categories [#124](https://github.com/mas2020-golang/raptor/issues/124)
 
 ### Changed
-- change the default pwd lenght for the `create password` cmd to 14 (#111)
+- change the default pwd lenght for the `create password` cmd to 14 [#111](https://github.com/mas2020-golang/raptor/issues/111)
 - refactor secret lookup to reuse shared helper across commands
 - The `get secret` command has been replaced by `get` command
 
