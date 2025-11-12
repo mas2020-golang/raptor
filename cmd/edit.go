@@ -12,7 +12,6 @@ import (
 func newEditCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:     "edit",
-		Aliases: []string{"secret", "sr"},
 		Short:   "Edit a raptor object",
 		Long:    `Edit a raptor object: secret`,
 	}

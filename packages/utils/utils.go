@@ -228,7 +228,7 @@ func OpenBox(boxName, pwd string) (string, string, *Box, error) {
 		return BoxPath, BoxPwd, BufferBox, nil
 	}
 
-	// check if the boxName is a file, in that case BoxPath is overrided by that
+	// check if the boxName is a file, in that case BoxPath is overriden by that
 	if validPath, _ := IsValidFilePath(boxName); validPath {
 		BoxPath = boxName
 	}
