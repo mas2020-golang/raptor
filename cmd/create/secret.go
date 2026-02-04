@@ -86,14 +86,14 @@ func addSecret(name string, box *utils.Box) error {
 	}
 	fmt.Print(output.BlueS("\nUrl: "))
 	s.Url = utils.GetText(r)
-	fmt.Println(output.BlueS("\nEnter your note (type 'EOF' on a new line to finish):"))
-	input, err = utils.GetComplexText()
+	fmt.Println(output.BlueS("\nOpening your editor to write notes..."))
+	input, _, err = utils.GetNoteFromEditor("")
 	if err != nil {
 		return err
 	}
 	s.Notes = input
 	fmt.Println(output.BlueS(strings.Repeat("-", 35)))
-	// utils.GetText(r) 
+	// utils.GetText(r)
 	fmt.Printf("Do you have other secres to add? [Y/n] ")
 	answer := utils.GetText(r)
 	if answer == "Y" {

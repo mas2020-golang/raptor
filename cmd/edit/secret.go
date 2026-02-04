@@ -17,10 +17,10 @@ import (
 
 // boxCmd represents the box command
 var EditSecretCmd = &cobra.Command{
-	Use:   "secret <NAME>",
-	Args:  cobra.MinimumNArgs(1),
+	Use:     "secret <NAME>",
+	Args:    cobra.MinimumNArgs(1),
 	Aliases: []string{"secret", "sr"},
-	Short: "Edit an existing secret",
+	Short:   "Edit an existing secret",
 	Long: `Edit a secret by name:
 The <NAME> argument is in the following format:
   - 'secret name.item': to update an item
@@ -104,16 +104,13 @@ func editSecret(name string, box *utils.Box, boxPath string) error {
 	fmt.Printf("Do you want to change the notes? [Y/n] ")
 	answer := utils.GetText(r)
 	if answer == "Y" {
-		fmt.Println(output.BlueS("\nEnter your note (type 'EOF' on a new line to finish):"))
-		input, err = utils.GetComplexText()
+		fmt.Println(output.BlueS("\nOpening your editor to update notes..."))
+		input, _, err = utils.GetNoteFromEditor(s.Notes)
 		if err != nil {
 			return err
 		}
-		if len(input) != 0 {
-			s.Notes = input
-		}
+		s.Notes = input
 		fmt.Println(output.BlueS(strings.Repeat("-", 35)))
-		// utils.GetText(r)
 	}
 	if s.Others != nil {
 		output.BlueOut("\nItems:\n")
